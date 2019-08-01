@@ -13,6 +13,7 @@
 #include <iosfwd>
 #include <map>
 #include <string>
+#include <iostream>
 
 namespace psr {
 

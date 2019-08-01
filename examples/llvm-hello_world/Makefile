@@ -14,7 +14,7 @@ CXX_FLAGS += -Wextra
 CXX_FLAGS += -O0
 # CXX_FLAGS += -march=native
 # CXX_FLAGS += -DNDEBUG
-CXX_FLAGS += -pipe
+#CXX_FLAGS += -pipe
 CXX_FLAGS += -g
 CXX_FLAGS += -rdynamic
 

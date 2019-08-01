@@ -13,7 +13,7 @@
 #include <stdexcept>
 #include <string>
 
-#include <dlfcn.h>
+//#include <dlfcn.h>
 
 namespace psr {
 

@@ -20,9 +20,9 @@ if (NOT CMAKE_BUILD_TYPE)
   default is 'Debug')" FORCE)
 endif ()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP -fvisibility-inlines-hidden -fstack-protector-strong -ffunction-sections -fdata-sections -pipe -g")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 else()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP -fvisibility-inlines-hidden -fstack-protector-strong -ffunction-sections -fdata-sections -pipe -march=native")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 endif()
 
 # Enable testing
@@ -47,12 +47,12 @@ endif (NOT CMAKE_BUILD_TYPE)
 
 option(PHASAR_ENABLE_WARNINGS "Enable warnings" ON)
 if (PHASAR_ENABLE_WARNINGS)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -Wno-return-type-c-linkage ")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ")
 endif (PHASAR_ENABLE_WARNINGS)
 
 option(PHASAR_ENABLE_PIC "Build Position-Independed Code" ON)
 if (PHASAR_ENABLE_PIC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 endif (PHASAR_ENABLE_PIC)
 
 if (NOT PHASAR_ENABLE_PAMM)
@@ -107,8 +107,8 @@ include_directories(${BOOST_INCLUDE_DIR})
 add_definitions(-DBOOST_LOG_DYN_LINK)
 
 # Curl
-find_package(CURL REQUIRED)
-include_directories(${CURL_INCLUDE_DIR})
+#find_package(CURL REQUIRED)
+#include_directories(${CURL_INCLUDE_DIR})
 
 # SQL
 find_path(SQLITE3_INCLUDE_DIR NAMES sqlite3.h)

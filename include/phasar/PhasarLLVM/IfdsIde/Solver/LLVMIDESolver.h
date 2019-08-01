@@ -277,7 +277,7 @@ public:
     return size * nmemb;
   }
 
-  CURL *curl;
+  /*CURL *curl;
   std::string getIdFromWebserver() {
     CURLcode res;
     std::string readBuffer;
@@ -297,7 +297,7 @@ public:
       return response["my_id"];
     }
     return 0;
-  }
+  }*/
 
   void sendToWebserver(const char *jsonString) {
     if (curl) {

@@ -21,7 +21,7 @@
 #include <map>
 #include <string>
 
-#include <curl/curl.h>
+//#include <curl/curl.h>
 #include <json.hpp>
 
 #include <phasar/PhasarLLVM/ControlFlow/ICFG.h>
@@ -281,7 +281,7 @@ public:
     ((std::string *)userp)->append((char *)contents, size * nmemb);
     return size * nmemb;
   }
-  CURL *curl;
+  /*CURL *curl;
   std::string getIdFromWebserver() {
     CURLcode res;
     std::string readBuffer;
@@ -301,7 +301,7 @@ public:
       return response["my_id"];
     }
     return 0;
-  }
+  }*/
 
   void sendToWebserver(const char *jsonString) {
     if (curl) {
