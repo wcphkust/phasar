@@ -1,5 +1,8 @@
-file(GLOB_RECURSE PLUGINS_SRC *.h *.cpp)
-file(GLOB_RECURSE PLUGINS_SO *.cxx)
+#file(GLOB_RECURSE PLUGINS_SRC *.h *.cpp)
+#file(GLOB_RECURSE PLUGINS_SO *.cxx)
+
+file(GLOB_RECURSE PLUGINS_SRC IFDSTabulationProblemTestPlugin.h)
+file(GLOB_RECURSE PLUGINS_SO IFDSTabulationProblemTestPlugin.cxx)
 
 # Handle the library files
 if(BUILD_SHARED_LIBS)

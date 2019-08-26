@@ -8,14 +8,14 @@
  *****************************************************************************/
 
 /*
- * IFDSTabulationProblemPlugin.h
+ * IFDSExtendedTabulationProblemPlugin.h
  *
  *  Created on: 14.06.2017
  *      Author: philipp
  */
 
-#ifndef PHASAR_PHASARLLVM_PLUGINS_INTERFACES_IFDSIDE_IFDSTABULATIONPROBLEMPLUGIN_H_
-#define PHASAR_PHASARLLVM_PLUGINS_INTERFACES_IFDSIDE_IFDSTABULATIONPROBLEMPLUGIN_H_
+#ifndef PHASAR_PHASARLLVM_PLUGINS_INTERFACES_IFDSIDE_IFDSEXTENDEDTABULATIONPROBLEMPLUGIN_H_
+#define PHASAR_PHASARLLVM_PLUGINS_INTERFACES_IFDSIDE_IFDSEXTENDEDTABULATIONPROBLEMPLUGIN_H_
 
 #include <map>
 #include <memory>
@@ -23,6 +23,7 @@
 #include <vector>
 
 #include <phasar/PhasarLLVM/IfdsIde/DefaultIFDSTabulationProblem.h>
+#include <phasar/PhasarLLVM/IfdsIde/FlowFact.h>
 #include <phasar/PhasarLLVM/IfdsIde/LLVMZeroValue.h>
 #include <phasar/Utils/LLVMShorthands.h>
 
@@ -38,39 +39,25 @@ class LLVMBasedICFG;
 
 class IFDSTabulationProblemPlugin
     : public DefaultIFDSTabulationProblem<
-          const llvm::Instruction *, const llvm::Value *,
+          const llvm::Instruction *, const FlowFact *,
           const llvm::Function *, LLVMBasedICFG &> {
 protected:
   std::vector<std::string> EntryPoints;
 
 public:
   IFDSTabulationProblemPlugin(LLVMBasedICFG &ICFG,
-                              std::vector<std::string> EntryPoints = {"main"})
+                              const FlowFact* zeroValue ,std::vector<std::string> EntryPoints = {"main"})
       : DefaultIFDSTabulationProblem<const llvm::Instruction *,
-                                     const llvm::Value *,
+                                     const FlowFact *,
                                      const llvm::Function *, LLVMBasedICFG &>(
             ICFG),
         EntryPoints(EntryPoints) {
-    DefaultIFDSTabulationProblem::zerovalue = createZeroValue();
+    DefaultIFDSTabulationProblem::zerovalue = zeroValue;
   }
   ~IFDSTabulationProblemPlugin() override = default;
 
-  const llvm::Value *createZeroValue() override {
-    // create a special value to represent the zero value!
-    return LLVMZeroValue::getInstance();
-  }
-
-  bool isZeroValue(const llvm::Value *d) const override {
-    return LLVMZeroValue::getInstance()->isLLVMZeroValue(d);
-  }
-
   void printNode(std::ostream &os, const llvm::Instruction *n) const override {
     os << llvmIRToString(n);
-  }
-
-  void printDataFlowFact(std::ostream &os,
-                         const llvm::Value *d) const override {
-    os << llvmIRToString(d);
   }
 
   void printMethod(std::ostream &os, const llvm::Function *m) const override {

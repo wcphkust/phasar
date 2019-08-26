@@ -18,14 +18,14 @@ namespace psr {
 
 template <typename T> class FlowFactWrapper : public FlowFact {
 private:
-  T fact;
+  const T fact;
 
 public:
   FlowFactWrapper(T f) : fact(f) {}
   virtual ~FlowFactWrapper() = default;
-  T get() { return fact; }
-  std::ostream &print(std::ostream &os) const override {
-    return os << fact << '\n';
+  T get() const { return fact; }
+  void print(std::ostream &os) const override {
+    os << fact << '\n';
   }
 };
 } // namespace psr
