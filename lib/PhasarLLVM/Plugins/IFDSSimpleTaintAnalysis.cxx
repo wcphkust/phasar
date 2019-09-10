@@ -49,74 +49,78 @@ __attribute__((destructor)) void fini() {
 
 IFDSSimpleTaintAnalysis::IFDSSimpleTaintAnalysis(LLVMBasedICFG &I,
                                                  vector<string> EntryPoints)
-    : IFDSTabulationProblemPlugin(I, EntryPoints) {}
+    : IFDSTabulationProblemPlugin(I, createZeroValue(), EntryPoints) {}
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSimpleTaintAnalysis::getNormalFlowFunction(const llvm::Instruction *curr,
                                                const llvm::Instruction *succ) {
   cout << "IFDSSimpleTaintAnalysis::getNormalFlowFunction()\n";
   if (auto Store = llvm::dyn_cast<llvm::StoreInst>(curr)) {
-    struct STA : FlowFunction<const llvm::Value *> {
+    struct STA : FlowFunction<const FlowFact *> {
       const llvm::StoreInst *Store;
       STA(const llvm::StoreInst *S) : Store(S) {}
-      set<const llvm::Value *> computeTargets(const llvm::Value *src) {
-        if (Store->getValueOperand() == src) {
-          return {Store->getValueOperand(), Store->getPointerOperand()};
+      //TODO:Pointer clean up
+      set<const FlowFact *> computeTargets(const FlowFact *src) override {
+        const FlowFactWrapper<const llvm::Value *>* wrapper = dynamic_cast<const FlowFactWrapper<const llvm::Value *>*>(src);
+        if (Store->getValueOperand() == wrapper->get()) {
+          return {new FlowFactWrapper<const llvm::Value*>(Store->getValueOperand()), new FlowFactWrapper<const llvm::Value*>(Store->getPointerOperand())};
         } else {
-          return {Store->getValueOperand()};
+          return {new FlowFactWrapper<const llvm::Value*>(Store->getValueOperand())};
         }
       }
     };
     return make_shared<STA>(Store);
   }
-  return Identity<const llvm::Value *>::getInstance();
+  return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSimpleTaintAnalysis::getCallFlowFunction(const llvm::Instruction *callStmt,
                                              const llvm::Function *destMthd) {
   cout << "IFDSSimpleTaintAnalysis::getCallFlowFunction()\n";
   if (auto Call = llvm::dyn_cast<llvm::CallInst>(callStmt)) {
     if (destMthd->getName().str() == "taint") {
-      return make_shared<Gen<const llvm::Value *>>(Call, zeroValue());
+      //TODO: Pointer Cleanup
+      auto* Callwrapper = new FlowFactWrapper<const llvm::Value *>(Call);
+      return make_shared<Gen<const FlowFact *>>(Callwrapper, zeroValue());
     } else if (destMthd->getName().str() == "leak") {
     } else {
     }
   }
-  return Identity<const llvm::Value *>::getInstance();
+  return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSimpleTaintAnalysis::getRetFlowFunction(const llvm::Instruction *callSite,
                                             const llvm::Function *calleeMthd,
                                             const llvm::Instruction *exitStmt,
                                             const llvm::Instruction *retSite) {
   cout << "IFDSSimpleTaintAnalysis::getRetFlowFunction()\n";
-  return Identity<const llvm::Value *>::getInstance();
+  return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSimpleTaintAnalysis::getCallToRetFlowFunction(
     const llvm::Instruction *callSite, const llvm::Instruction *retSite,
     set<const llvm::Function *> callees) {
   cout << "IFDSSimpleTaintAnalysis::getCallToRetFlowFunction()\n";
-  return Identity<const llvm::Value *>::getInstance();
+  return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSimpleTaintAnalysis::getSummaryFlowFunction(
     const llvm::Instruction *callStmt, const llvm::Function *destMthd) {
   cout << "IFDSSimpleTaintAnalysis::getSummaryFlowFunction()\n";
   return nullptr;
 }
 
-map<const llvm::Instruction *, set<const llvm::Value *>>
+map<const llvm::Instruction *, set<const FlowFact *>>
 IFDSSimpleTaintAnalysis::initialSeeds() {
   cout << "IFDSSimpleTaintAnalysis::initialSeeds()\n";
-  map<const llvm::Instruction *, set<const llvm::Value *>> SeedMap;
+  map<const llvm::Instruction *, set<const FlowFact *>> SeedMap;
   for (auto &EntryPoint : EntryPoints) {
     SeedMap.insert(std::make_pair(&icfg.getMethod(EntryPoint)->front().front(),
-                                  set<const llvm::Value *>({zeroValue()})));
+                                  set<const FlowFact *>({zeroValue()})));
   }
   return SeedMap;
 }

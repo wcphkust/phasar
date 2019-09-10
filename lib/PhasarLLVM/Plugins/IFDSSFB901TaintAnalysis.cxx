@@ -44,53 +44,53 @@ __attribute__((destructor)) void fini() {
 
 IFDSSFB901TaintAnalysis::IFDSSFB901TaintAnalysis(LLVMBasedICFG &I,
                                                  vector<string> EntryPoints)
-    : IFDSTabulationProblemPlugin(I, EntryPoints) {}
+    : IFDSTabulationProblemPlugin(I, createZeroValue(), EntryPoints) {}
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+shared_ptr<FlowFunction<const FlowFact*>>
 IFDSSFB901TaintAnalysis::getNormalFlowFunction(const llvm::Instruction *curr,
                                                const llvm::Instruction *succ) {
   cout << "IFDSSFB901TaintAnalysis::getNormalFlowFunction()\n";
-  return Identity<const llvm::Value *>::getInstance();
+  return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+shared_ptr<FlowFunction<const FlowFact*>>
 IFDSSFB901TaintAnalysis::getCallFlowFunction(const llvm::Instruction *callStmt,
                                              const llvm::Function *destMthd) {
   cout << "IFDSSFB901TaintAnalysis::getCallFlowFunction()\n";
-  return Identity<const llvm::Value *>::getInstance();
+  return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+shared_ptr<FlowFunction<const FlowFact*>>
 IFDSSFB901TaintAnalysis::getRetFlowFunction(const llvm::Instruction *callSite,
                                             const llvm::Function *calleeMthd,
                                             const llvm::Instruction *exitStmt,
                                             const llvm::Instruction *retSite) {
   cout << "IFDSSFB901TaintAnalysis::getRetFlowFunction()\n";
-  return Identity<const llvm::Value *>::getInstance();
+  return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+shared_ptr<FlowFunction<const FlowFact*>>
 IFDSSFB901TaintAnalysis::getCallToRetFlowFunction(
     const llvm::Instruction *callSite, const llvm::Instruction *retSite,
     set<const llvm::Function *> callees) {
   cout << "IFDSSFB901TaintAnalysis::getCallToRetFlowFunction()\n";
-  return Identity<const llvm::Value *>::getInstance();
+  return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+shared_ptr<FlowFunction<const FlowFact*>>
 IFDSSFB901TaintAnalysis::getSummaryFlowFunction(
     const llvm::Instruction *callStmt, const llvm::Function *destMthd) {
   cout << "IFDSSFB901TaintAnalysis::getSummaryFlowFunction()\n";
   return nullptr;
 }
 
-map<const llvm::Instruction *, set<const llvm::Value *>>
+map<const llvm::Instruction *, set<const FlowFact *>>
 IFDSSFB901TaintAnalysis::initialSeeds() {
   cout << "IFDSSFB901TaintAnalysis::initialSeeds()\n";
-  map<const llvm::Instruction *, set<const llvm::Value *>> SeedMap;
+  map<const llvm::Instruction *, set<const FlowFact *>> SeedMap;
   SeedMap.insert(std::make_pair(
       &icfg.getMethod("run_service_contrast_cpu")->front().front(),
-      set<const llvm::Value *>({zeroValue()})));
+      set<const FlowFact *>({zeroValue()})));
   return SeedMap;
 }
 
