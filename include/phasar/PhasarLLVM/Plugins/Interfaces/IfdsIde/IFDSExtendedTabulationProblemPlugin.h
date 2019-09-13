@@ -39,18 +39,17 @@ class LLVMBasedICFG;
 
 class IFDSTabulationProblemPlugin
     : public DefaultIFDSTabulationProblem<
-          const llvm::Instruction *, const FlowFact *,
-          const llvm::Function *, LLVMBasedICFG &> {
+          const llvm::Instruction *, const FlowFact *, const llvm::Function *,
+          LLVMBasedICFG &> {
 protected:
   std::vector<std::string> EntryPoints;
 
 public:
-  IFDSTabulationProblemPlugin(LLVMBasedICFG &ICFG,
-                              const FlowFact* zeroValue ,std::vector<std::string> EntryPoints = {"main"})
+  IFDSTabulationProblemPlugin(LLVMBasedICFG &ICFG, const FlowFact *zeroValue,
+                              std::vector<std::string> EntryPoints = {"main"})
       : DefaultIFDSTabulationProblem<const llvm::Instruction *,
-                                     const FlowFact *,
-                                     const llvm::Function *, LLVMBasedICFG &>(
-            ICFG),
+                                     const FlowFact *, const llvm::Function *,
+                                     LLVMBasedICFG &>(ICFG),
         EntryPoints(EntryPoints) {
     DefaultIFDSTabulationProblem::zerovalue = zeroValue;
   }

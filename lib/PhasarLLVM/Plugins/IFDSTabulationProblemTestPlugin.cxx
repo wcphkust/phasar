@@ -47,46 +47,45 @@ __attribute__((destructor)) void fini() {
 IFDSTabulationProblemTestPlugin::IFDSTabulationProblemTestPlugin(
     LLVMBasedICFG &I, vector<string> EntryPoints)
     : IFDSTabulationProblemPlugin(I, createZeroValue(), EntryPoints) {}
-    
 
-shared_ptr<FlowFunction<const FlowFact*>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSTabulationProblemTestPlugin::getNormalFlowFunction(
     const llvm::Instruction *curr, const llvm::Instruction *succ) {
   cout << "IFDSTabulationProblemTestPlugin::getNormalFlowFunction()\n";
-  return Identity<const FlowFact*>::getInstance();
+  return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const FlowFact*>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSTabulationProblemTestPlugin::getCallFlowFunction(
     const llvm::Instruction *callStmt, const llvm::Function *destMthd) {
   cout << "IFDSTabulationProblemTestPlugin::getCallFlowFunction()\n";
-  return Identity<const FlowFact*>::getInstance();
+  return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const FlowFact*>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSTabulationProblemTestPlugin::getRetFlowFunction(
     const llvm::Instruction *callSite, const llvm::Function *calleeMthd,
     const llvm::Instruction *exitStmt, const llvm::Instruction *retSite) {
   cout << "IFDSTabulationProblemTestPlugin::getRetFlowFunction()\n";
-  return Identity<const FlowFact*>::getInstance();
+  return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const FlowFact*>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSTabulationProblemTestPlugin::getCallToRetFlowFunction(
     const llvm::Instruction *callSite, const llvm::Instruction *retSite,
     set<const llvm::Function *> callees) {
   cout << "IFDSTabulationProblemTestPlugin::getCallToRetFlowFunction()\n";
-  return Identity<const FlowFact*>::getInstance();
+  return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const FlowFact*>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSTabulationProblemTestPlugin::getSummaryFlowFunction(
     const llvm::Instruction *callStmt, const llvm::Function *destMthd) {
   cout << "IFDSTabulationProblemTestPlugin::getSummaryFlowFunction()\n";
   return nullptr;
 }
 
-map<const llvm::Instruction *, set<const FlowFact*>>
+map<const llvm::Instruction *, set<const FlowFact *>>
 IFDSTabulationProblemTestPlugin::initialSeeds() {
   cout << "IFDSTabulationProblemTestPlugin::initialSeeds()\n";
   map<const llvm::Instruction *, set<const FlowFact *>> SeedMap;

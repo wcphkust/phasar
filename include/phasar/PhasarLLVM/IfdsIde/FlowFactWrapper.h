@@ -24,9 +24,13 @@ public:
   FlowFactWrapper(T f) : fact(f) {}
   virtual ~FlowFactWrapper() = default;
   T get() const { return fact; }
-  void print(std::ostream &os) const override {
-    os << fact << '\n';
-  }
+  void print(std::ostream &os) const override { os << fact << '\n'; }
+  // bool equal_to(const FlowFact &FF) const override {
+  //   return fact == FF.get();
+  // }
+  // bool less(const FlowFact &FF) const override {
+  //   return fact < FF.get();
+  // }
 };
 } // namespace psr
 

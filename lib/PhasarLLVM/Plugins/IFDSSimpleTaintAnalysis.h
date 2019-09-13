@@ -28,22 +28,23 @@ public:
                           std::vector<std::string> EntryPoints);
   ~IFDSSimpleTaintAnalysis() = default;
 
-  const FlowFact* createZeroValue() override {
+  const FlowFact *createZeroValue() override {
     // create a special value to represent the zero value!
-    return new const FlowFactWrapper<const llvm::Value*>(LLVMZeroValue::getInstance());
+    return new const FlowFactWrapper<const llvm::Value *>(
+        LLVMZeroValue::getInstance());
   }
 
   bool isZeroValue(const FlowFact *d) const override {
-    const FlowFactWrapper<const llvm::Value*>* d1 = dynamic_cast<const FlowFactWrapper<const llvm::Value*>*>(d);
+    const FlowFactWrapper<const llvm::Value *> *d1 =
+        dynamic_cast<const FlowFactWrapper<const llvm::Value *> *>(d);
     return LLVMZeroValue::getInstance()->isLLVMZeroValue(d1->get());
   }
 
-  void printDataFlowFact(std::ostream &os,
-                         const FlowFact *d) const override {
-    const FlowFactWrapper<const llvm::Value*>* d1 = dynamic_cast<const FlowFactWrapper<const llvm::Value*>*>(d);
+  void printDataFlowFact(std::ostream &os, const FlowFact *d) const override {
+    const FlowFactWrapper<const llvm::Value *> *d1 =
+        dynamic_cast<const FlowFactWrapper<const llvm::Value *> *>(d);
     os << llvmIRToString(d1->get());
   }
-
 
   std::shared_ptr<FlowFunction<const FlowFact *>>
   getNormalFlowFunction(const llvm::Instruction *curr,

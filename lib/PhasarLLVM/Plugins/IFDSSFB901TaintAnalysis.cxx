@@ -46,21 +46,21 @@ IFDSSFB901TaintAnalysis::IFDSSFB901TaintAnalysis(LLVMBasedICFG &I,
                                                  vector<string> EntryPoints)
     : IFDSTabulationProblemPlugin(I, createZeroValue(), EntryPoints) {}
 
-shared_ptr<FlowFunction<const FlowFact*>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSFB901TaintAnalysis::getNormalFlowFunction(const llvm::Instruction *curr,
                                                const llvm::Instruction *succ) {
   cout << "IFDSSFB901TaintAnalysis::getNormalFlowFunction()\n";
   return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const FlowFact*>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSFB901TaintAnalysis::getCallFlowFunction(const llvm::Instruction *callStmt,
                                              const llvm::Function *destMthd) {
   cout << "IFDSSFB901TaintAnalysis::getCallFlowFunction()\n";
   return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const FlowFact*>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSFB901TaintAnalysis::getRetFlowFunction(const llvm::Instruction *callSite,
                                             const llvm::Function *calleeMthd,
                                             const llvm::Instruction *exitStmt,
@@ -69,7 +69,7 @@ IFDSSFB901TaintAnalysis::getRetFlowFunction(const llvm::Instruction *callSite,
   return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const FlowFact*>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSFB901TaintAnalysis::getCallToRetFlowFunction(
     const llvm::Instruction *callSite, const llvm::Instruction *retSite,
     set<const llvm::Function *> callees) {
@@ -77,7 +77,7 @@ IFDSSFB901TaintAnalysis::getCallToRetFlowFunction(
   return Identity<const FlowFact *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const FlowFact*>>
+shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSFB901TaintAnalysis::getSummaryFlowFunction(
     const llvm::Instruction *callStmt, const llvm::Function *destMthd) {
   cout << "IFDSSFB901TaintAnalysis::getSummaryFlowFunction()\n";

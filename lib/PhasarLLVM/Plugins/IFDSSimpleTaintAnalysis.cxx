@@ -21,9 +21,9 @@
 #include <llvm/IR/Value.h>
 
 #include <phasar/PhasarLLVM/ControlFlow/LLVMBasedICFG.h>
-
 #include <phasar/PhasarLLVM/IfdsIde/FlowFunctions/Gen.h>
 #include <phasar/PhasarLLVM/IfdsIde/FlowFunctions/Identity.h>
+#include <phasar/PhasarLLVM/IfdsIde/FlowFunctions/KillAll.h>
 
 #include "IFDSSimpleTaintAnalysis.h"
 using namespace std;
@@ -56,20 +56,41 @@ IFDSSimpleTaintAnalysis::getNormalFlowFunction(const llvm::Instruction *curr,
                                                const llvm::Instruction *succ) {
   cout << "IFDSSimpleTaintAnalysis::getNormalFlowFunction()\n";
   if (auto Store = llvm::dyn_cast<llvm::StoreInst>(curr)) {
-    struct STA : FlowFunction<const FlowFact *> {
+    struct TFF : FlowFunction<const FlowFact *> {
       const llvm::StoreInst *Store;
-      STA(const llvm::StoreInst *S) : Store(S) {}
-      //TODO:Pointer clean up
+      TFF(const llvm::StoreInst *S) : Store(S) {}
+      // TODO:Pointer clean up
       set<const FlowFact *> computeTargets(const FlowFact *src) override {
-        const FlowFactWrapper<const llvm::Value *>* wrapper = dynamic_cast<const FlowFactWrapper<const llvm::Value *>*>(src);
+        const FlowFactWrapper<const llvm::Value *> *wrapper =
+            static_cast<const FlowFactWrapper<const llvm::Value *> *>(src);
         if (Store->getValueOperand() == wrapper->get()) {
-          return {new FlowFactWrapper<const llvm::Value*>(Store->getValueOperand()), new FlowFactWrapper<const llvm::Value*>(Store->getPointerOperand())};
+          return {new FlowFactWrapper<const llvm::Value *>(
+                      Store->getValueOperand()),
+                  new FlowFactWrapper<const llvm::Value *>(
+                      Store->getPointerOperand())};
         } else {
-          return {new FlowFactWrapper<const llvm::Value*>(Store->getValueOperand())};
+          return {src};
         }
       }
     };
-    return make_shared<STA>(Store);
+    return make_shared<TFF>(Store);
+  }
+  if (auto Load = llvm::dyn_cast<llvm::LoadInst>(curr)) {
+    struct TFF : FlowFunction<const FlowFact *> {
+      const llvm::LoadInst *Load;
+      TFF(const llvm::LoadInst *L) : Load(L) {}
+      // TODO:Pointer clean up
+      set<const FlowFact *> computeTargets(const FlowFact *src) override {
+        const FlowFactWrapper<const llvm::Value *> *wrapper =
+            static_cast<const FlowFactWrapper<const llvm::Value *> *>(src);
+        if (Load->getPointerOperand() == wrapper->get()) {
+          return {new FlowFactWrapper<const llvm::Value *>(Load), src};
+        } else {
+          return {src};
+        }
+      }
+    };
+    return make_shared<TFF>(Load);
   }
   return Identity<const FlowFact *>::getInstance();
 }
@@ -78,14 +99,10 @@ shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSimpleTaintAnalysis::getCallFlowFunction(const llvm::Instruction *callStmt,
                                              const llvm::Function *destMthd) {
   cout << "IFDSSimpleTaintAnalysis::getCallFlowFunction()\n";
-  if (auto Call = llvm::dyn_cast<llvm::CallInst>(callStmt)) {
-    if (destMthd->getName().str() == "taint") {
-      //TODO: Pointer Cleanup
-      auto* Callwrapper = new FlowFactWrapper<const llvm::Value *>(Call);
-      return make_shared<Gen<const FlowFact *>>(Callwrapper, zeroValue());
-    } else if (destMthd->getName().str() == "leak") {
-    } else {
-    }
+  // Do not follow calls to sources and sinks and handle their special
+  // semantics in getCallToRetFlowFunction()
+  if (destMthd->getName() == "taint" || destMthd->getName() == "leak") {
+    return KillAll<const FlowFact *>::getInstance();
   }
   return Identity<const FlowFact *>::getInstance();
 }
@@ -104,6 +121,29 @@ IFDSSimpleTaintAnalysis::getCallToRetFlowFunction(
     const llvm::Instruction *callSite, const llvm::Instruction *retSite,
     set<const llvm::Function *> callees) {
   cout << "IFDSSimpleTaintAnalysis::getCallToRetFlowFunction()\n";
+  for (auto callee : callees) {
+    if (callee->getName() == "taint") {
+      return make_shared<Gen<const FlowFact *>>(
+          new FlowFactWrapper<const llvm::Value *>(callSite), zeroValue());
+    }
+    if (callee->getName() == "leak") {
+      struct TFF : FlowFunction<const FlowFact *> {
+        llvm::ImmutableCallSite CS;
+        TFF(const llvm::Instruction *callSite) : CS(callSite) {}
+        set<const FlowFact *> computeTargets(const FlowFact *src) override {
+          for (auto &arg : CS.args()) {
+            if (static_cast<const FlowFactWrapper<const llvm::Value *> *>(src)
+                    ->get() == arg) {
+              cout << "IFDSSimpleTaintAnalysis ==> found leak at instruction: "
+                   << llvmIRToString(CS.getInstruction()) << '\n';
+            }
+          }
+          return {src};
+        }
+      };
+      return make_shared<TFF>(callSite);
+    }
+  }
   return Identity<const FlowFact *>::getInstance();
 }
 
