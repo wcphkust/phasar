@@ -18,11 +18,25 @@ class EdgeFact {
 public:
   virtual ~EdgeFact() = default;
   virtual void print(std::ostream &os) const = 0;
+  virtual bool equal_to(const EdgeFact &EF) const = 0;
+  virtual bool less(const EdgeFact &EF) const = 0;
 };
 
 static inline std::ostream &operator<<(std::ostream &OS, const EdgeFact &E) {
   E.print(OS);
   return OS;
+}
+
+static inline bool operator==(const EdgeFact &E, const EdgeFact &G) {
+  return E.equal_to(G);
+}
+
+static inline bool operator!=(const EdgeFact &E, const EdgeFact &G) {
+  return !E.equal_to(G);
+}
+
+static inline bool operator<(const EdgeFact &E, const EdgeFact &G) {
+  return E.less(G);
 }
 
 } // namespace psr

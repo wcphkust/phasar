@@ -18,8 +18,8 @@ class FlowFact {
 public:
   virtual ~FlowFact() = default;
   virtual void print(std::ostream &os) const = 0;
-  // virtual bool equal_to(const FlowFact &FF) const = 0;
-  // virtual bool less(const FlowFact &FF) const = 0;
+  virtual bool equal_to(const FlowFact &FF) const = 0;
+  virtual bool less(const FlowFact &FF) const = 0;
 };
 
 static inline std::ostream &operator<<(std::ostream &OS, const FlowFact &F) {
@@ -27,17 +27,17 @@ static inline std::ostream &operator<<(std::ostream &OS, const FlowFact &F) {
   return OS;
 }
 
-// static inline bool operator==(const FlowFact &F, const FlowFact &G) {
-//   return F.equal_to(G);
-// }
+static inline bool operator==(const FlowFact &F, const FlowFact &G) {
+  return F.equal_to(G);
+}
 
-// static inline bool operator!=(const FlowFact &F, const FlowFact &G) {
-//   return !F.equal_to(G);
-// }
+static inline bool operator!=(const FlowFact &F, const FlowFact &G) {
+  return !F.equal_to(G);
+}
 
-// static inline bool operator<(const FlowFact &F, const FlowFact &G) {
-//   return F.less(G);
-// }
+static inline bool operator<(const FlowFact &F, const FlowFact &G) {
+  return F.less(G);
+}
 
 } // namespace psr
 

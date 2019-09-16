@@ -25,12 +25,24 @@ public:
   virtual ~FlowFactWrapper() = default;
   T get() const { return fact; }
   void print(std::ostream &os) const override { os << fact << '\n'; }
-  // bool equal_to(const FlowFact &FF) const override {
-  //   return fact == FF.get();
-  // }
-  // bool less(const FlowFact &FF) const override {
-  //   return fact < FF.get();
-  // }
+
+  // need to use try because of reference typs
+  bool equal_to(const FlowFact &FF) const override {
+    try {
+      auto FFW = dynamic_cast<const FlowFactWrapper<T> &>(FF);
+      return fact == FFW.get();
+    } catch (std::bad_cast exp) {
+      return *this == FF;
+    }
+  }
+  bool less(const FlowFact &FF) const override {
+    try {
+      auto FFW = dynamic_cast<const FlowFactWrapper<T> &>(FF);
+      return fact < FFW.get();
+    } catch (std::bad_cast exp) {
+      return *this < FF;
+    }
+  }
 };
 } // namespace psr
 

@@ -18,6 +18,14 @@ namespace psr {
 
 void ZeroFlowFact::print(ostream &os) const { os << "ZeroFlowFact"; }
 
+bool ZeroFlowFact::equal_to(const FlowFact &FF) const {
+  return *ZeroFlowFact::getInstance() == FF;
+}
+
+bool ZeroFlowFact::less(const FlowFact &FF) const {
+  return *ZeroFlowFact::getInstance() < FF;
+}
+
 FlowFact *ZeroFlowFact::getInstance() {
   static ZeroFlowFact ZeroFact;
   return &ZeroFact;
