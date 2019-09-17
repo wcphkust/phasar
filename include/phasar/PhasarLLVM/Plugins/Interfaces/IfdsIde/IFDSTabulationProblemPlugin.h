@@ -30,7 +30,6 @@
 namespace llvm {
 class Function;
 class Instruction;
-class Value;
 } // namespace llvm
 
 namespace psr {

@@ -17,7 +17,9 @@
 #ifndef SRC_ANALYSIS_PLUGINS_IFDSTABULATIONPROBLEMTESTPLUGIN_H_
 #define SRC_ANALYSIS_PLUGINS_IFDSTABULATIONPROBLEMTESTPLUGIN_H_
 
+#include <phasar/PhasarLLVM/IfdsIde/EdgeFunctionComposer.h>
 #include <phasar/PhasarLLVM/IfdsIde/FlowFactWrapper.h>
+#include <phasar/PhasarLLVM/IfdsIde/Problems/TypeStateDescriptions/TypeStateDescription.h>
 #include <phasar/PhasarLLVM/Plugins/Interfaces/IfdsIde/IFDSTabulationProblemPlugin.h>
 
 namespace psr {

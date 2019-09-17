@@ -29,14 +29,20 @@ public:
 
   void print(std::ostream &os) const override { os << fact << '\n'; }
 
-  bool equal_to(const FlowFact &FF) const override {
-    // TODO provide better implementation
-    return false;
+  bool equal_to(const FlowFact &EF) const override {
+    if (auto EFW = dynamic_cast<const FlowFactWrapper<T> *>(&EF)) {
+      return fact == EFW->get();
+    } else {
+      return this == EFW;
+    }
   }
 
-  bool less(const FlowFact &FF) const override {
-    // TODO provide better implementation
-    return false;
+  bool less(const FlowFact &EF) const override {
+    if (auto EFW = dynamic_cast<const FlowFactWrapper<T> *>(&EF)) {
+      return fact < EFW->get();
+    } else {
+      return this < EFW;
+    }
   }
 };
 

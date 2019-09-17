@@ -27,16 +27,22 @@ public:
 
   T get() { return fact; }
 
-  void print(std::ostream &os) const override { os << fact << '\n'; }
+  void print(std::ostream &OS) const override { OS << fact << '\n'; }
 
   bool equal_to(const EdgeFact &EF) const override {
-    // TODO provide better implementation
-    return false;
+    if (auto EFW = dynamic_cast<const EdgeFactWrapper<T> *>(&EF)) {
+      return fact == EFW->get();
+    } else {
+      return this == EFW;
+    }
   }
 
   bool less(const EdgeFact &EF) const override {
-    // TODO provide better implementation
-    return false;
+    if (auto EFW = dynamic_cast<const EdgeFactWrapper<T> *>(&EF)) {
+      return fact < EFW->get();
+    } else {
+      return this < EFW;
+    }
   }
 };
 

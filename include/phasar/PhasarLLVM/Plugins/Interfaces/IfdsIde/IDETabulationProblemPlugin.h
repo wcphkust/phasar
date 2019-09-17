@@ -15,22 +15,27 @@
 #include <string>
 #include <vector>
 
-#include <llvm/IR/Function.h>
-#include <llvm/IR/Instruction.h>
-
 #include <phasar/PhasarLLVM/IfdsIde/DefaultIDETabulationProblem.h>
+#include <phasar/PhasarLLVM/IfdsIde/EdgeFact.h>
+#include <phasar/PhasarLLVM/IfdsIde/FlowFact.h>
+#include <phasar/PhasarLLVM/IfdsIde/LLVMZeroValue.h>
 #include <phasar/Utils/LLVMShorthands.h>
+
+namespace llvm {
+class Function;
+class Instruction;
+class Value;
+} // namespace llvm
 
 namespace psr {
 
-class FlowFact;
-class EdgeFact;
 class LLVMBasedICFG;
 
 class IDETabulationProblemPlugin
     : public DefaultIDETabulationProblem<
           const llvm::Instruction *, const FlowFact *, const llvm::Function *,
           const EdgeFact *, LLVMBasedICFG &> {
+
 protected:
   std::vector<std::string> EntryPoints;
 
@@ -39,9 +44,9 @@ public:
                              std::vector<std::string> EntryPoints = {"main"})
       : DefaultIDETabulationProblem<const llvm::Instruction *, const FlowFact *,
                                     const llvm::Function *, const EdgeFact *,
-                                    LLVMBasedICFG &>(ICFG),
+                                    LLVMBasedICFG &>,
         EntryPoints(EntryPoints) {
-    DefaultIDETabulationProblem::zerovalue = zeroValue;
+    IDETabulationProblemPlugin::zerovalue = zeroValue;
   }
   ~IDETabulationProblemPlugin() override = default;
 
