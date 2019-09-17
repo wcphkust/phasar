@@ -18,7 +18,7 @@
 #define SRC_ANALYSIS_PLUGINS_IFDSSIMPLETAINTANALYSIS_H_
 
 #include <phasar/PhasarLLVM/IfdsIde/FlowFactWrapper.h>
-#include <phasar/PhasarLLVM/Plugins/Interfaces/IfdsIde/IFDSExtendedTabulationProblemPlugin.h>
+#include <phasar/PhasarLLVM/Plugins/Interfaces/IfdsIde/IFDSTabulationProblemPlugin.h>
 
 namespace psr {
 
@@ -28,23 +28,11 @@ public:
                           std::vector<std::string> EntryPoints);
   ~IFDSSimpleTaintAnalysis() = default;
 
-  const FlowFact *createZeroValue() override {
-    // create a special value to represent the zero value!
-    return new const FlowFactWrapper<const llvm::Value *>(
-        LLVMZeroValue::getInstance());
-  }
+  const FlowFact *createZeroValue() override;
 
-  bool isZeroValue(const FlowFact *d) const override {
-    const FlowFactWrapper<const llvm::Value *> *d1 =
-        dynamic_cast<const FlowFactWrapper<const llvm::Value *> *>(d);
-    return LLVMZeroValue::getInstance()->isLLVMZeroValue(d1->get());
-  }
+  bool isZeroValue(const FlowFact *d) const override;
 
-  void printDataFlowFact(std::ostream &os, const FlowFact *d) const override {
-    const FlowFactWrapper<const llvm::Value *> *d1 =
-        dynamic_cast<const FlowFactWrapper<const llvm::Value *> *>(d);
-    os << llvmIRToString(d1->get());
-  }
+  void printDataFlowFact(std::ostream &os, const FlowFact *d) const override;
 
   std::shared_ptr<FlowFunction<const FlowFact *>>
   getNormalFlowFunction(const llvm::Instruction *curr,

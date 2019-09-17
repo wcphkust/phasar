@@ -47,9 +47,27 @@ __attribute__((destructor)) void fini() {
   cout << "fini - IFDSSimpleTaintAnalysis\n";
 }
 
+const FlowFact *IFDSSimpleTaintAnalysis::createZeroValue() {
+  // create a special value to represent the zero value!
+  return new FlowFactWrapper<const llvm::Value *>(LLVMZeroValue::getInstance());
+}
+
+bool IFDSSimpleTaintAnalysis::isZeroValue(const FlowFact *d) const {
+  const FlowFactWrapper<const llvm::Value *> *d1 =
+      static_cast<const FlowFactWrapper<const llvm::Value *> *>(d);
+  return LLVMZeroValue::getInstance()->isLLVMZeroValue(d1->get());
+}
+
 IFDSSimpleTaintAnalysis::IFDSSimpleTaintAnalysis(LLVMBasedICFG &I,
                                                  vector<string> EntryPoints)
     : IFDSTabulationProblemPlugin(I, createZeroValue(), EntryPoints) {}
+
+void IFDSSimpleTaintAnalysis::printDataFlowFact(std::ostream &os,
+                                                const FlowFact *d) const {
+  const FlowFactWrapper<const llvm::Value *> *d1 =
+      static_cast<const FlowFactWrapper<const llvm::Value *> *>(d);
+  os << llvmIRToString(d1->get());
+}
 
 shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSimpleTaintAnalysis::getNormalFlowFunction(const llvm::Instruction *curr,

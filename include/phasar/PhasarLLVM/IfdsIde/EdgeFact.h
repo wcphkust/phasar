@@ -17,7 +17,7 @@ namespace psr {
 class EdgeFact {
 public:
   virtual ~EdgeFact() = default;
-  virtual void print(std::ostream &os) const = 0;
+  virtual void print(std::ostream &OS) const = 0;
   virtual bool equal_to(const EdgeFact &EF) const = 0;
   virtual bool less(const EdgeFact &EF) const = 0;
 };

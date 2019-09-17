@@ -28,7 +28,7 @@
 #include <phasar/PhasarLLVM/ControlFlow/ICFG.h>
 #include <phasar/PhasarLLVM/Passes/GeneralStatisticsPass.h>
 #include <phasar/PhasarLLVM/Plugins/Interfaces/IfdsIde/IDETabulationProblemPlugin.h>
-#include <phasar/PhasarLLVM/Plugins/Interfaces/IfdsIde/IFDSExtendedTabulationProblemPlugin.h>
+#include <phasar/PhasarLLVM/Plugins/Interfaces/IfdsIde/IFDSTabulationProblemPlugin.h>
 #include <phasar/PhasarLLVM/Plugins/Interfaces/Mono/InterMonoProblemPlugin.h>
 #include <phasar/PhasarLLVM/Plugins/Interfaces/Mono/IntraMonoProblemPlugin.h>
 #include <phasar/PhasarLLVM/Utils/DataFlowAnalysisType.h>

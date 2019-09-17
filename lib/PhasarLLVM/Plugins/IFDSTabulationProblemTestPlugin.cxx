@@ -48,6 +48,24 @@ IFDSTabulationProblemTestPlugin::IFDSTabulationProblemTestPlugin(
     LLVMBasedICFG &I, vector<string> EntryPoints)
     : IFDSTabulationProblemPlugin(I, createZeroValue(), EntryPoints) {}
 
+const FlowFact *IFDSTabulationProblemTestPlugin::createZeroValue() {
+  // create a special value to represent the zero value!
+  return new FlowFactWrapper<const llvm::Value *>(LLVMZeroValue::getInstance());
+}
+
+bool IFDSTabulationProblemTestPlugin::isZeroValue(const FlowFact *d) const {
+  const FlowFactWrapper<const llvm::Value *> *d1 =
+      static_cast<const FlowFactWrapper<const llvm::Value *> *>(d);
+  return LLVMZeroValue::getInstance()->isLLVMZeroValue(d1->get());
+}
+
+void IFDSTabulationProblemTestPlugin::printDataFlowFact(
+    std::ostream &os, const FlowFact *d) const {
+  const FlowFactWrapper<const llvm::Value *> *d1 =
+      static_cast<const FlowFactWrapper<const llvm::Value *> *>(d);
+  os << llvmIRToString(d1->get());
+}
+
 shared_ptr<FlowFunction<const FlowFact *>>
 IFDSTabulationProblemTestPlugin::getNormalFlowFunction(
     const llvm::Instruction *curr, const llvm::Instruction *succ) {

@@ -46,6 +46,24 @@ IFDSSFB901TaintAnalysis::IFDSSFB901TaintAnalysis(LLVMBasedICFG &I,
                                                  vector<string> EntryPoints)
     : IFDSTabulationProblemPlugin(I, createZeroValue(), EntryPoints) {}
 
+const FlowFact *IFDSSFB901TaintAnalysis::createZeroValue() {
+  // create a special value to represent the zero value!
+  return new FlowFactWrapper<const llvm::Value *>(LLVMZeroValue::getInstance());
+}
+
+bool IFDSSFB901TaintAnalysis::isZeroValue(const FlowFact *d) const {
+  const FlowFactWrapper<const llvm::Value *> *d1 =
+      static_cast<const FlowFactWrapper<const llvm::Value *> *>(d);
+  return LLVMZeroValue::getInstance()->isLLVMZeroValue(d1->get());
+}
+
+void IFDSSFB901TaintAnalysis::printDataFlowFact(std::ostream &os,
+                                                const FlowFact *d) const {
+  const FlowFactWrapper<const llvm::Value *> *d1 =
+      static_cast<const FlowFactWrapper<const llvm::Value *> *>(d);
+  os << llvmIRToString(d1->get());
+}
+
 shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSFB901TaintAnalysis::getNormalFlowFunction(const llvm::Instruction *curr,
                                                const llvm::Instruction *succ) {

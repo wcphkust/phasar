@@ -17,7 +17,7 @@ namespace psr {
 class FlowFact {
 public:
   virtual ~FlowFact() = default;
-  virtual void print(std::ostream &os) const = 0;
+  virtual void print(std::ostream &OS) const = 0;
   virtual bool equal_to(const FlowFact &FF) const = 0;
   virtual bool less(const FlowFact &FF) const = 0;
 };

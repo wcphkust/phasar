@@ -22,28 +22,24 @@ private:
 
 public:
   FlowFactWrapper(T f) : fact(f) {}
-  virtual ~FlowFactWrapper() = default;
+
+  ~FlowFactWrapper() override = default;
+
   T get() const { return fact; }
+
   void print(std::ostream &os) const override { os << fact << '\n'; }
 
-  // need to use try because of reference typs
   bool equal_to(const FlowFact &FF) const override {
-    try {
-      auto FFW = dynamic_cast<const FlowFactWrapper<T> &>(FF);
-      return fact == FFW.get();
-    } catch (std::bad_cast exp) {
-      return *this == FF;
-    }
+    // TODO provide better implementation
+    return false;
   }
+
   bool less(const FlowFact &FF) const override {
-    try {
-      auto FFW = dynamic_cast<const FlowFactWrapper<T> &>(FF);
-      return fact < FFW.get();
-    } catch (std::bad_cast exp) {
-      return *this < FF;
-    }
+    // TODO provide better implementation
+    return false;
   }
 };
+
 } // namespace psr
 
 #endif
