@@ -44,7 +44,7 @@ public:
                              std::vector<std::string> EntryPoints = {"main"})
       : DefaultIDETabulationProblem<const llvm::Instruction *, const FlowFact *,
                                     const llvm::Function *, const EdgeFact *,
-                                    LLVMBasedICFG &>,
+                                    LLVMBasedICFG &>(ICFG),
         EntryPoints(EntryPoints) {
     IDETabulationProblemPlugin::zerovalue = zeroValue;
   }

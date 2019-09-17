@@ -25,7 +25,7 @@ public:
 
   ~FlowFactWrapper() override = default;
 
-  T get() const { return fact; }
+  const T get() const { return fact; }
 
   void print(std::ostream &os) const override { os << fact << '\n'; }
 

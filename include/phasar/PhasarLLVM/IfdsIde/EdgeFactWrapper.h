@@ -18,14 +18,14 @@ namespace psr {
 
 template <typename T> class EdgeFactWrapper : public EdgeFact {
 private:
-  T fact;
+  const T fact;
 
 public:
   EdgeFactWrapper(T f) : fact(f) {}
 
   ~EdgeFactWrapper() override = default;
 
-  T get() { return fact; }
+  T get() const { return fact; }
 
   void print(std::ostream &OS) const override { OS << fact << '\n'; }
 
