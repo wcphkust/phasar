@@ -16,9 +16,9 @@ endif()
 
 target_link_libraries(phasar_plugins
   phasar_ifdside
-  boost_system
-  boost_filesystem
-  boost_log
+  ${BOOST_SYSTEM}
+  ${BOOST_FILESYSTEM}
+  ${BOOST_LOG}
   ${CMAKE_DL_LIBS}
 )
 

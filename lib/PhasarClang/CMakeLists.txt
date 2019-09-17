@@ -39,8 +39,8 @@ target_link_libraries(phasar_clang
   LLVMSupport
   LLVMCore
 
-  boost_log
-  boost_system
+  ${BOOST_LOG}
+  ${BOOST_SYSTEM}
 )
 
 set_target_properties(phasar_clang

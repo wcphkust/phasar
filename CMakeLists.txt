@@ -25,6 +25,8 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 endif()
 
+add_compile_definitions(_HAS_STD_BYTE=0)
+
 # Enable testing
 enable_testing()
 
@@ -119,8 +121,8 @@ include_directories(${BOOST_INCLUDE_DIR})
 add_definitions(-DBOOST_LOG_DYN_LINK)
 
 # Curl
-#find_package(CURL REQUIRED)
-#include_directories(${CURL_INCLUDE_DIR})
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIR})
 
 # SQL
 find_path(SQLITE3_INCLUDE_DIR NAMES sqlite3.h)
@@ -161,7 +163,7 @@ add_definitions(${LLVM_DEFINITIONS})
 # Clang
 if (NOT PHASAR_IN_TREE)
   # Only search for clang if we build out of tree
-  find_library(CLANG_LIBRARY NAMES clang REQUIRED)
+  find_package(CLANG CONFIG REQUIRED)
   link_directories(${CLANG_LIB_PATH})
 endif()
 
@@ -224,10 +226,11 @@ add_executable(wpdstest
 )
 
 # Fix boost_thread dependency for MacOS
+# mmo: This is pretty hacky imho.
 if(APPLE)
   set(BOOST_THREAD boost_thread-mt)
 else()
-  set(BOOST_THREAD boost_thread)
+#  set(BOOST_THREAD boost_thread)
 endif()
 
 # Workaround: Remove Plugins for MacOS for now
@@ -254,20 +257,20 @@ target_link_libraries(phasar
   phasar_pointer
   phasar_phasarllvm_utils
   phasar_utils
-  boost_program_options
-  boost_filesystem
-  boost_graph
-  boost_system
-  boost_log
+  ${BOOST_PROGRAM_OPTIONS}
+  ${BOOST_FILESYSTEM}
+  ${BOOST_GRAPH}
+  ${BOOST_SYSTEM}
+  ${BOOST_LOG}
   ${BOOST_THREAD}
   ${SQLITE3_LIBRARY}
   ${Boost_LIBRARIES}
   ${CMAKE_DL_LIBS}
   ${CMAKE_THREAD_LIBS_INIT}
-  ${CLANG_LIBRARIES}
+  #${CLANG_LIBRARIES_DEBUG}
   ${llvm_libs}
-  curl
-  gtest
+  ${CURL_LIBRARIES}
+  #gtest
 )
 
 target_link_libraries(myphasartool
@@ -284,19 +287,19 @@ target_link_libraries(myphasartool
   phasar_pointer
   phasar_phasarllvm_utils
   phasar_utils
-  boost_program_options
-  boost_filesystem
-  boost_graph
-  boost_system
-  boost_log
+  ${BOOST_PROGRAM_OPTIONS}
+  ${BOOST_FILESYSTEM}
+  ${BOOST_GRAPH}
+  ${BOOST_SYSTEM}
+  ${BOOST_LOG}
   ${BOOST_THREAD}
   ${Boost_LIBRARIES}
   ${CMAKE_DL_LIBS}
   ${CMAKE_THREAD_LIBS_INIT}
   ${CLANG_LIBRARIES}
   ${llvm_libs}
-  curl
-  gtest
+  ${CURL_LIBRARIES}
+  #gtest
 )
 
 target_link_libraries(wpdstest
@@ -315,12 +318,12 @@ target_link_libraries(wpdstest
   phasar_pointer
   phasar_phasarllvm_utils
   phasar_utils
-  curl
-  boost_program_options
-  boost_filesystem
-  boost_graph
-  boost_system
-  boost_log
+  ${CURL_LIBRARIES}
+  ${BOOST_PROGRAM_OPTIONS}
+  ${BOOST_FILESYSTEM}
+  ${BOOST_GRAPH}
+  ${BOOST_SYSTEM}
+  ${BOOST_LOG}
   ${BOOST_THREAD}
   ${SQLITE3_LIBRARY}
   ${Boost_LIBRARIES}
@@ -341,16 +344,16 @@ target_link_libraries(syncpdstest
   phasar_syncpds
   ${PHASAR_PLUGINS_LIB}
   wali
-  curl
+  ${CURL_LIBRARIES}
   phasar_passes
   phasar_pointer
   phasar_phasarllvm_utils
   phasar_utils
-  boost_program_options
-  boost_filesystem
-  boost_graph
-  boost_system
-  boost_log
+  ${BOOST_PROGRAM_OPTIONS}
+  ${BOOST_FILESYSTEM}
+  ${BOOST_GRAPH}
+  ${BOOST_SYSTEM}
+  ${BOOST_LOG}
   ${BOOST_THREAD}
   ${Boost_LIBRARIES}
   ${CMAKE_DL_LIBS}
@@ -369,16 +372,16 @@ target_link_libraries(boomerangtest
   phasar_syncpds
   ${PHASAR_PLUGINS_LIB}
   wali
-  curl
+  ${CURL_LIBRARIES}
   phasar_passes
   phasar_pointer
   phasar_phasarllvm_utils
   phasar_utils
-  boost_program_options
-  boost_filesystem
-  boost_graph
-  boost_system
-  boost_log
+  ${BOOST_PROGRAM_OPTIONS}
+  ${BOOST_FILESYSTEM}
+  ${BOOST_GRAPH}
+  ${BOOST_SYSTEM}
+  ${BOOST_LOG}
   ${BOOST_THREAD}
   ${Boost_LIBRARIES}
   ${CMAKE_DL_LIBS}

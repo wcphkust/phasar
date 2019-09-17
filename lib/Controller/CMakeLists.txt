@@ -19,8 +19,8 @@ target_link_libraries(phasar_controller
 
   LLVMCore
 
-  curl
-  boost_log
+  ${CURL_LIBRARIES}
+  ${BOOST_LOG}
 )
 
 set_target_properties(phasar_controller

@@ -27,7 +27,7 @@
 #include <unordered_set>
 #include <utility>
 
-//#include <curl/curl.h>
+#include <curl/curl.h>
 #include <json.hpp>
 
 #include <boost/algorithm/string/trim.hpp>

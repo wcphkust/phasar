@@ -17,7 +17,7 @@
 
 #include <llvm/IR/DerivedTypes.h>
 
-#include <cxxabi.h>
+//#include <cxxabi.h>
 
 #include <phasar/Utils/Macros.h>
 using namespace std;
@@ -26,12 +26,13 @@ using namespace psr;
 namespace psr {
 
 string cxx_demangle(const string &mangled_name) {
-  int status = 0;
+  /*int status = 0;
   char *demangled =
       abi::__cxa_demangle(mangled_name.c_str(), NULL, NULL, &status);
   string result((status == 0 && demangled != NULL) ? demangled : mangled_name);
   free(demangled);
-  return result;
+  return result;*/
+  return "";
 }
 
 bool isConstructor(const string &mangled_name) {

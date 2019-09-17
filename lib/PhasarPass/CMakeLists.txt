@@ -1,16 +1,23 @@
 file(GLOB_RECURSE PHASARPASS_SRC *.h *.cpp)
 
-add_phasar_library(phasar_pass
-  SHARED
-  ${PHASARPASS_SRC}
-)
+if(BUILD_SHARED_LIBS)
+	add_phasar_library(phasar_pass
+	  SHARED
+	  ${PHASARPASS_SRC}
+	)
+else()
+	add_phasar_library(phasar_pass
+	  STATIC
+	  ${PHASARPASS_SRC}
+	)
+endif()
 
 target_link_libraries(phasar_pass
-  boost_filesystem
-  boost_graph
-  boost_log
-  boost_program_options
-  boost_system
+  ${BOOST_PROGRAM_OPTIONS}
+  ${BOOST_FILESYSTEM}
+  ${BOOST_GRAPH}
+  ${BOOST_SYSTEM}
+  ${BOOST_LOG}
 
   phasar_config
   phasar_controlflow

@@ -5,10 +5,11 @@ function(add_phasar_unittest test_name)
     ${test_name}
   )
   # Fix boost_thread dependency for MacOS
+  # mmo: This is pretty hacky imho.
   if(APPLE)
     set(BOOST_THREAD boost_thread-mt)
   else()
-    set(BOOST_THREAD boost_thread)
+    #set(BOOST_THREAD boost_thread)
   endif()
   # Workaround: Remove Plugins for MacOS for now
   if(APPLE)
@@ -31,11 +32,11 @@ function(add_phasar_unittest test_name)
     phasar_pointer
     phasar_phasarllvm_utils
     phasar_utils
-    boost_program_options
-    boost_filesystem
-    boost_graph
-    boost_system
-    boost_log
+    ${BOOST_PROGRAM_OPTIONS}
+    ${BOOST_FILESYSTEM}
+    ${BOOST_GRAPH}
+    ${BOOST_SYSTEM}
+    ${BOOST_LOG}
     ${BOOST_THREAD}
     ${SQLITE3_LIBRARY}
     ${Boost_LIBRARIES}
