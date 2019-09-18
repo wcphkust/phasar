@@ -294,14 +294,12 @@ IDETabulationProblemTestPlugin::getNormalEdgeFunction(
         LOG_IF_ENABLE(BOOST_LOG_SEV(lg, DEBUG) << ' ');
         if (lop == currNode && llvm::isa<llvm::ConstantInt>(rop)) {
           auto ric = llvm::dyn_cast<llvm::ConstantInt>(rop);
-          int64_t i = wrapper->get();
           return IDETabulationProblemTestPlugin::executeBinOperation(
-              Op, i, ric->getSExtValue());
+              Op, wrapper->get(), ric->getSExtValue());
         } else if (rop == currNode && llvm::isa<llvm::ConstantInt>(lop)) {
           auto lic = llvm::dyn_cast<llvm::ConstantInt>(lop);
-          int64_t i = wrapper->get();
           return IDETabulationProblemTestPlugin::executeBinOperation(
-              Op, lic->getSExtValue(), i);
+              Op, lic->getSExtValue(), wrapper->get());
         } else if (LLVMZeroValue::getInstance()->isLLVMZeroValue(currNode) &&
                    llvm::isa<llvm::ConstantInt>(lop) &&
                    llvm::isa<llvm::ConstantInt>(rop)) {
