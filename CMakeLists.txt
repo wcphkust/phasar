@@ -15,6 +15,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if(WIN32)
+	add_definitions(-D_HAS_STD_BYTE=0)
+endif()
+
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build mode ('Debug' or 'Release',
   default is 'Debug')" FORCE)
@@ -24,8 +28,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 endif()
-
-add_compile_definitions(_HAS_STD_BYTE=0)
 
 # Enable testing
 enable_testing()
