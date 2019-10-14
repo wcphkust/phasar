@@ -2,6 +2,11 @@ file(GLOB_RECURSE PHASARCLANG_SRC *.h *.cpp)
 
 include_directories(${CLANG_INCLUDE_DIRS})
 
+set(LLVM_LINK_COMPONENTS
+  Support
+  Core
+)
+
 if(BUILD_SHARED_LIBS)
   add_phasar_library(phasar_clang
     SHARED
@@ -15,6 +20,7 @@ else()
 endif()
 
 target_link_libraries(phasar_clang
+  LINK_PUBLIC
   clangTooling
   clangFrontendTool
   clangFrontend
@@ -35,9 +41,6 @@ target_link_libraries(phasar_clang
   clangASTMatchers
   clangLex
   clangBasic
-
-  LLVMSupport
-  LLVMCore
 
   ${Boost_LOG_LIBRARY}
   ${Boost_SYSTEM}

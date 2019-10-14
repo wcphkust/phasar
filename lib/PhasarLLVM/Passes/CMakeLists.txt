@@ -1,5 +1,15 @@
 file(GLOB_RECURSE PASSES_SRC *.h *.cpp)
 
+set(PHASAR_LINK_LIBS
+  phasar_utils
+)
+
+set(LLVM_LINK_COMPONENTS
+  Core
+  Support
+  Analysis
+)
+
 if(BUILD_SHARED_LIBS)
 	add_phasar_library(phasar_passes
 		SHARED
@@ -13,13 +23,9 @@ else()
 endif()
 
 target_link_libraries(phasar_passes
-  phasar_utils
-
+  LINK_PUBLIC
   ${Boost_LOG_LIBRARY}
-
-  LLVMCore
-  LLVMSupport
-  LLVMAnalysis
+  ${Boost_FILESYSTEM_LIBRARY}
 )
 
 set_target_properties(phasar_passes

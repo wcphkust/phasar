@@ -143,26 +143,6 @@ if (NOT PHASAR_IN_TREE)
   link_directories(${LLVM_LIB_PATH} ${LLVM_LIBRARY_DIRS})
 endif()
 
-llvm_map_components_to_libnames(llvm_libs
-  coverage
-  coroutines
-  libdriver
-  lto
-  support
-  analysis
-  bitwriter
-  core
-  ipo
-  irreader
-  instcombine
-  instrumentation
-  linker
-  objcarcopts
-  scalaropts
-  transformutils
-  codegen
-  vectorize
-)
 add_definitions(${LLVM_DEFINITIONS})
 
 # Clang
@@ -208,27 +188,75 @@ set(CLANG_LIBRARIES
 add_subdirectory(include)
 add_subdirectory(lib)
 
+set(LLVM_LINK_COMPONENTS
+  coverage
+  coroutines
+  libdriver
+  lto
+  support
+  analysis
+  bitwriter
+  core
+  ipo
+  irreader
+  instcombine
+  instrumentation
+  linker
+  objcarcopts
+  scalaropts
+  transformutils
+  codegen
+  vectorize
+)
+
+llvm_map_components_to_libnames(llvm_libs
+  ${LLVM_LINK_COMPONENTS}
+)
+
 # Build a stand-alone executable
-add_executable(phasar
+if(PHASAR_IN_TREE)
+  add_phasar_executable(phasar
   tools/phasar/phasar.cpp
-)
+  )
 
-# Build a small test tool to show how phasar may be used
-add_executable(myphasartool
+  # Build a small test tool to show how phasar may be used
+  add_phasar_executable(myphasartool
   tools/phasar/myphasartool.cpp
-)
+  )
 
-add_executable(syncpdstest
+  add_phasar_executable(syncpdstest
   tools/phasar/syncpdstest.cpp
-)
+  )
 
-add_executable(boomerangtest
+  add_phasar_executable(boomerangtest
   tools/phasar/boomerangtest.cpp
-)
+  )
 
-add_executable(wpdstest
+  add_phasar_executable(wpdstest
   tools/phasar/wpdstest.cpp
-)
+  )
+else()
+  add_executable(phasar
+    tools/phasar/phasar.cpp
+  )
+
+  # Build a small test tool to show how phasar may be used
+  add_executable(myphasartool
+    tools/phasar/myphasartool.cpp
+  )
+
+  add_executable(syncpdstest
+    tools/phasar/syncpdstest.cpp
+  )
+
+  add_executable(boomerangtest
+    tools/phasar/boomerangtest.cpp
+  )
+
+  add_executable(wpdstest
+    tools/phasar/wpdstest.cpp
+  )
+endif()
 
 # Fix boost_thread dependency for MacOS
 # mmo: This is pretty hacky imho.
@@ -249,12 +277,19 @@ endif()
 # Warning! There is a another listing of libraries inside cmake/phasar_macros.cmake.
 # If this list is altered the other one should be altered accordingly.
 target_link_libraries(phasar
+  LINK_PUBLIC
   phasar_config
   phasar_controller
+  phasar_controlflow
+  phasar_phasarllvm_utils
+  phasar_ifdside
+  phasar_utils
+  phasar_mono
   phasar_db
   phasar_experimental
   phasar_clang
   phasar_passes
+
   ${PHASAR_PLUGINS_LIB}
   phasar_pointer
   ${BOOST_PROGRAM_OPTIONS}
@@ -267,12 +302,24 @@ target_link_libraries(phasar
   ${Boost_LIBRARIES}
   ${CMAKE_DL_LIBS}
   ${CMAKE_THREAD_LIBS_INIT}
+  ${CLANG_LIBRARIES}
   #${CLANG_LIBRARIES_DEBUG}
   ${CURL_LIBRARIES}
   #gtest
 )
 
+if(NOT PHASAR_IN_TREE)
+target_link_libraries(phasar
+  LINK_PUBLIC
+  ${llvm_libs}
+)
+endif()
+
+set(LLVM_LINK_COMPONENTS
+)
+
 target_link_libraries(myphasartool
+  LINK_PUBLIC
   phasar_config
   phasar_controller
   phasar_db
@@ -302,6 +349,7 @@ target_link_libraries(myphasartool
 )
 
 target_link_libraries(wpdstest
+  LINK_PUBLIC
   phasar_config
   phasar_controller
   phasar_db
@@ -331,6 +379,7 @@ target_link_libraries(wpdstest
 )
 
 target_link_libraries(syncpdstest
+  LINK_PUBLIC
   phasar_config
   phasar_controller
   phasar_db
@@ -359,6 +408,7 @@ target_link_libraries(syncpdstest
 )
 
 target_link_libraries(boomerangtest
+  LINK_PUBLIC
   phasar_config
   phasar_controller
   phasar_db

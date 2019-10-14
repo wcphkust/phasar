@@ -1,5 +1,15 @@
 file(GLOB_RECURSE POINTER_SRC *.h *.cpp)
 
+set(PHASAR_LINK_LIBS
+  phasar_utils
+)
+
+set(LLVM_LINK_COMPONENTS
+  Core
+  Support
+  Analysis
+)
+
 # Handle the library files
 if(BUILD_SHARED_LIBS)
 	add_phasar_library(phasar_pointer
@@ -14,13 +24,10 @@ else()
 endif()
 
 target_link_libraries(phasar_pointer
-  phasar_utils
-
+  LINK_PUBLIC
   ${BOOST_LOG}
-
-  LLVMCore
-  LLVMSupport
-  LLVMAnalysis
+  ${BOOST_FILESYSTEM}
+  ${BOOST_GRAPH}
 )
 
 set_target_properties(phasar_pointer

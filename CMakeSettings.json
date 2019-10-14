@@ -18,7 +18,7 @@
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DBUILD_SHARED_LIBS=off -DPHASAR_BUILD_UNITTESTS=on",
+      "cmakeCommandArgs": "-DBUILD_SHARED_LIBS=on -DPHASAR_BUILD_UNITTESTS=on",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "clang_cl_x64" ],

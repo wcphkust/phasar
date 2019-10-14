@@ -6,6 +6,17 @@ if(PHASAR_ENABLE_PAMM STREQUAL "Off" AND NOT PHASAR_BUILD_UNITTESTS)
 	list(REMOVE_ITEM UTILS_SRC ${pamm_src})
 endif()
 
+set(PHASAR_LINK_LIBS
+  phasar_config
+)
+
+set(LLVM_LINK_COMPONENTS
+  Core
+  Support
+  BitWriter
+)
+
+
 if(BUILD_SHARED_LIBS)
   add_phasar_library(phasar_utils
     SHARED
@@ -19,17 +30,11 @@ else()
 endif()
 
 target_link_libraries(phasar_utils
-  phasar_config
-
-  LLVMCore
-  LLVMSupport
-  LLVMBitWriter
-
+  LINK_PUBLIC
   ${Boost_LOG_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
   ${Boost_DATE_TIME_LIBRARY}
   ${Boost_THREAD_LIBRARY}
-
   ${CMAKE_DL_LIBS}
   Dbghelp
 )
