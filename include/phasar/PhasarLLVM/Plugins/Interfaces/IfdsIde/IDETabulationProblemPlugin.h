@@ -59,10 +59,6 @@ public:
   }
 };
 
-extern "C" std::unique_ptr<IDETabulationProblemPlugin>
-makeIDETabulationProblemPlugin(LLVMBasedICFG &I,
-                               std::vector<std::string> EntryPoints);
-
 extern std::map<std::string,
                 std::unique_ptr<IDETabulationProblemPlugin> (*)(
                     LLVMBasedICFG &I, std::vector<std::string> EntryPoints)>
