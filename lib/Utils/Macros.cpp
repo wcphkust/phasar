@@ -29,20 +29,15 @@ using namespace psr;
 namespace psr {
 
 string cxx_demangle(const string &mangled_name) {
-  /*int status = 0;
+  int status = 0;
   char *demangled =
-      abi::__cxa_demangle(mangled_name.c_str(), NULL, NULL, &status);
-  string result((status == 0 && demangled != NULL) ? demangled : mangled_name);
+      llvm::microsoftDemangle(mangled_name.c_str(), NULL, NULL, &status);
+  string result((status == 0 && demangled != NULL) ? demangled : mangled_name);	
   free(demangled);
-  return result;*/
-	size_t resultbuflen = mangled_name.length() + 1;
-	char *resultbuf = (char *)malloc(sizeof(char) * resultbuflen);
-	llvm::microsoftDemangle(mangled_name.c_str(), resultbuf, &resultbuflen, NULL);
-	std::string result(resultbuf);
-	std::cout << "mangled: " << mangled_name << std::endl;
-	std::cout << "------------------------------------------------------------------------" << std::endl;
-	std::cout << "demangled llvm: " << result << std::endl;
-	return result;// boost::core::demangle(mangled_name.c_str());
+  std::cout << "mangled: " << mangled_name << std::endl;
+  std::cout << "------------------------------------------------------------------------" << std::endl;
+  std::cout << "demangled llvm: " << result << std::endl;
+  return result;
 }
 
 bool isConstructor(const string &mangled_name) {

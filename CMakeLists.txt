@@ -34,6 +34,10 @@ endif()
 # Enable testing
 enable_testing()
 
+# Set library output path to allow execution of generated .exe programs in windows
+#set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
+#set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
+
 # TODO: allow Phasar to be build as a llvm drop-in as well
 # if (NOT DEFINED LLVM_MAIN_SRC_DIR)
 #  message(FATAL_ERROR "Phasar is not a llvm drop-in, abort!")
