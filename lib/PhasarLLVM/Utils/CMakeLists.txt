@@ -18,10 +18,16 @@ else()
 	)
 endif()
 
+target_include_directories(phasar_phasarllvm_utils
+  PUBLIC
+  ${CMAKE_BINARY_DIR}/exports/
+)
+
 target_link_libraries(phasar_phasarllvm_utils
   LINK_PUBLIC
   ${BOOST_FILESYSTEM}
-  ${BOOST_SYSTEM})
+  ${BOOST_SYSTEM}
+)
 
 set_target_properties(phasar_phasarllvm_utils
 	PROPERTIES

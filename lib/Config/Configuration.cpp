@@ -90,7 +90,7 @@ void PhasarConfig::loadLLVMSpecialFunctionNames() {
   }
 }
 
-const std::string PhasarConfig::phasar_directory = std::string([]() {
+const PHASAR_CONFIG_EXPORT std::string PhasarConfig::phasar_directory = std::string([]() {
   std::string curr_path = boost::filesystem::current_path().string();
   size_t i = curr_path.rfind("build", curr_path.length());
   return curr_path.substr(0, i);

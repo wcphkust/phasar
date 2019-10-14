@@ -26,6 +26,8 @@
 #include <phasar/PhasarLLVM/IfdsIde/LLVMZeroValue.h>
 #include <phasar/Utils/LLVMShorthands.h>
 
+#include <phasar_plugins_export.h>
+
 namespace llvm {
 class Function;
 class Instruction;
@@ -78,7 +80,7 @@ public:
   }
 };
 
-extern std::map<std::string,
+extern PHASAR_PLUGINS_EXPORT std::map<std::string,
                 std::unique_ptr<IFDSTabulationProblemPlugin> (*)(
                     LLVMBasedICFG &I, std::vector<std::string> EntryPoints)>
     IFDSTabulationProblemPluginFactory;

@@ -18,6 +18,7 @@
 #define PHASAR_PHASARLLVM_PASSES_VALUEANNOTATIONPASS_H_
 
 #include <llvm/Pass.h>
+#include <phasar_passes_export.h>
 
 namespace llvm {
 class LLVMContext;
@@ -42,7 +43,7 @@ private:
   llvm::LLVMContext &context;
 
 public:
-  static char ID;
+  static PHASAR_PASSES_EXPORT char ID;
   ValueAnnotationPass(llvm::LLVMContext &context)
       : llvm::ModulePass(ID), context(context) {}
 

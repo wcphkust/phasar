@@ -23,6 +23,11 @@ else()
   )
 endif()
 
+target_include_directories(phasar_controlflow
+  PUBLIC
+  ${CMAKE_BINARY_DIR}/exports/
+)
+
 set_target_properties(phasar_controlflow
   PROPERTIES
   LINKER_LANGUAGE CXX

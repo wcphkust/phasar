@@ -22,6 +22,11 @@ else()
   )
 endif()
 
+target_include_directories(phasar_wpds
+  PUBLIC
+  ${CMAKE_BINARY_DIR}/exports/
+)
+
 target_link_libraries(phasar_wpds
   LINK_PUBLIC
   ${BOOST_FILESYSTEM}

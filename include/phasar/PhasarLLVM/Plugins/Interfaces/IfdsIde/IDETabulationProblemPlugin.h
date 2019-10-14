@@ -15,6 +15,8 @@
 #include <string>
 #include <vector>
 
+#include <phasar_plugins_export.h>
+
 namespace psr {
 
 class LLVMBasedICFG;
@@ -25,7 +27,7 @@ extern "C" std::unique_ptr<IDETabulationProblemPlugin>
 makeIDETabulationProblemPlugin(LLVMBasedICFG &I,
                                std::vector<std::string> EntryPoints);
 
-extern std::map<std::string,
+extern PHASAR_PLUGINS_EXPORT std::map<std::string,
                 std::unique_ptr<IDETabulationProblemPlugin> (*)(
                     LLVMBasedICFG &I, std::vector<std::string> EntryPoints)>
     IDETabulationProblemPluginFactory;

@@ -23,9 +23,11 @@
 #include <phasar/PhasarLLVM/IfdsIde/IFDSTabulationProblem.h>
 #include <phasar/PhasarLLVM/Utils/BinaryDomain.h>
 
+#include <phasar_ifdside_export.h>
+
 namespace psr {
 
-extern const std::shared_ptr<AllBottom<BinaryDomain>> ALL_BOTTOM;
+extern PHASAR_IFDSIDE_EXPORT const std::shared_ptr<AllBottom<BinaryDomain>> ALL_BOTTOM;
 
 /**
  * This class promotes a given IFDSTabulationProblem to an IDETabulationProblem

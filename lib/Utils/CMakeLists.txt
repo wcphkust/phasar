@@ -7,7 +7,7 @@ if(PHASAR_ENABLE_PAMM STREQUAL "Off" AND NOT PHASAR_BUILD_UNITTESTS)
 endif()
 
 set(PHASAR_LINK_LIBS
-  phasar_config
+
 )
 
 set(LLVM_LINK_COMPONENTS
@@ -29,14 +29,24 @@ else()
   )
 endif()
 
+target_include_directories(phasar_utils
+  PUBLIC
+  ${CMAKE_BINARY_DIR}/exports/
+)
+
+if(WIN32)
+  set(DBGHELPLIB Dbghelp)
+endif()
+
 target_link_libraries(phasar_utils
   LINK_PUBLIC
   ${Boost_LOG_LIBRARY}
+  ${Boost_PROGRAM_OPTIONS_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
   ${Boost_DATE_TIME_LIBRARY}
   ${Boost_THREAD_LIBRARY}
   ${CMAKE_DL_LIBS}
-  Dbghelp
+  ${DBGHELPLIB}
 )
 
 set_target_properties(phasar_utils

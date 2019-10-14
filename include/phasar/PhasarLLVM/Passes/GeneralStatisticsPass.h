@@ -20,6 +20,7 @@
 #include <set>
 
 #include <llvm/Pass.h>
+#include <phasar_passes_export.h>
 
 namespace llvm {
 class Type;
@@ -64,7 +65,7 @@ private:
   std::set<const llvm::Instruction *> retResInstructions;
 
 public:
-  static char ID;
+  static PHASAR_PASSES_EXPORT char ID;
   GeneralStatisticsPass() : llvm::ModulePass(ID) {}
 
   /**

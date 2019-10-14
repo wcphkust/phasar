@@ -18,10 +18,9 @@
 #include <boost/core/demangle.hpp>
 
 #include <llvm/IR/DerivedTypes.h>
+#include <llvm/Demangle/Demangle.h>
 
 //#include <cxxabi.h>
-#include <Windows.h>
-#include <DbgHelp.h>
 
 #include <phasar/Utils/Macros.h>
 using namespace std;
@@ -36,13 +35,13 @@ string cxx_demangle(const string &mangled_name) {
   string result((status == 0 && demangled != NULL) ? demangled : mangled_name);
   free(demangled);
   return result;*/
-	std::string result;
-	char demangled[100 + 1] = { 0 };
-	if (UnDecorateSymbolName(mangled_name.c_str(), demangled, 100, UNDNAME_NAME_ONLY) > 0)
-		result = demangled;
+	size_t resultbuflen = mangled_name.length() + 1;
+	char *resultbuf = (char *)malloc(sizeof(char) * resultbuflen);
+	llvm::microsoftDemangle(mangled_name.c_str(), resultbuf, &resultbuflen, NULL);
+	std::string result(resultbuf);
 	std::cout << "mangled: " << mangled_name << std::endl;
 	std::cout << "------------------------------------------------------------------------" << std::endl;
-	std::cout << "demangled winapi: " << result << std::endl;
+	std::cout << "demangled llvm: " << result << std::endl;
 	return result;// boost::core::demangle(mangled_name.c_str());
 }
 

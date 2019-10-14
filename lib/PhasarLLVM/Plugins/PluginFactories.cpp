@@ -14,21 +14,21 @@ using namespace psr;
 namespace psr {
 
 // Maps for registering the plugins
-map<string, unique_ptr<IFDSTabulationProblemPlugin> (*)(LLVMBasedICFG &,
+PHASAR_PLUGINS_EXPORT map<string, unique_ptr<IFDSTabulationProblemPlugin> (*)(LLVMBasedICFG &,
                                                         vector<string>)>
     IFDSTabulationProblemPluginFactory;
 
-map<string,
+PHASAR_PLUGINS_EXPORT map<string,
     unique_ptr<IDETabulationProblemPlugin> (*)(LLVMBasedICFG &, vector<string>)>
     IDETabulationProblemPluginFactory;
 
-map<string, unique_ptr<IntraMonoProblemPlugin> (*)()>
+PHASAR_PLUGINS_EXPORT map<string, unique_ptr<IntraMonoProblemPlugin> (*)()>
     IntraMonoProblemPluginFactory;
 
-map<string, unique_ptr<InterMonoProblemPlugin> (*)()>
+PHASAR_PLUGINS_EXPORT map<string, unique_ptr<InterMonoProblemPlugin> (*)()>
     InterMonoProblemPluginFactory;
 
-map<string,
+PHASAR_PLUGINS_EXPORT map<string,
     unique_ptr<ICFGPlugin> (*)(ProjectIRDB &, const vector<string> EntryPoints)>
     ICFGPluginFactory;
 

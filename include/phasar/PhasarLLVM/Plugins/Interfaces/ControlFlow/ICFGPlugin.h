@@ -17,6 +17,8 @@
 
 #include <phasar/PhasarLLVM/ControlFlow/ICFG.h>
 
+#include <phasar_plugins_export.h>
+
 namespace llvm {
 class Instruction;
 class Function;
@@ -37,7 +39,7 @@ public:
       : IRDB(IRDB), EntryPoints(move(EntryPoints)) {}
 };
 
-extern std::map<std::string,
+extern PHASAR_PLUGINS_EXPORT std::map<std::string,
                 std::unique_ptr<ICFGPlugin> (*)(
                     ProjectIRDB &, const std::vector<std::string> EntryPoints)>
     ICFGPluginFactory;

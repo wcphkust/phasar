@@ -26,6 +26,7 @@
 #include <llvm/Support/ManagedStatic.h>
 
 #include <phasar/Config/Version.h>
+#include <phasar_config_export.h>
 
 #define XSTR(S) STR(S)
 #define STR(S) #S
@@ -45,7 +46,7 @@ public:
   }
 
   /// Specifies the directory in which Phasar is located.
-  static const std::string PhasarDirectory() { return phasar_directory; }
+  static PHASAR_CONFIG_EXPORT const std::string PhasarDirectory() { return phasar_directory; }
 
   /// Name of the file storing all standard header search paths used for
   /// compilation.
@@ -129,7 +130,7 @@ private:
   }();
 
   /// Specifies the directory in which Phasar is located.
-  static const std::string phasar_directory;
+  static const PHASAR_CONFIG_EXPORT std::string phasar_directory;
 
   /// Name of the file storing all glibc function names.
   const std::string GLIBCFunctionListFileName =

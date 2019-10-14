@@ -16,6 +16,14 @@ else()
   )
 endif()
 
+include(GenerateExportHeader)
+generate_export_header(phasar_config EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/phasar_config_export.h)
+
+target_include_directories(phasar_config
+  PUBLIC
+  ${CMAKE_BINARY_DIR}/exports
+)
+
 target_link_libraries(phasar_config
   LINK_PUBLIC
   ${Boost_LIBRARIES}

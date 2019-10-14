@@ -23,11 +23,14 @@ else()
 	)
 endif()
 
+target_include_directories(phasar_pointer
+  PUBLIC
+  ${CMAKE_BINARY_DIR}/exports/
+)
+
 target_link_libraries(phasar_pointer
   LINK_PUBLIC
-  ${BOOST_LOG}
-  ${BOOST_FILESYSTEM}
-  ${BOOST_GRAPH}
+  ${Boost_GRAPH_LIBRARY}
 )
 
 set_target_properties(phasar_pointer

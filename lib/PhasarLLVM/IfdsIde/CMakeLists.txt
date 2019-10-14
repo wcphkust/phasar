@@ -26,6 +26,14 @@ else()
   )
 endif()
 
+include(GenerateExportHeader)
+generate_export_header(phasar_ifdside EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/phasar_ifdside_export.h)
+
+target_include_directories(phasar_ifdside
+  PUBLIC
+  ${CMAKE_BINARY_DIR}/exports/
+)
+
 set_target_properties(phasar_ifdside
   PROPERTIES
   LINKER_LANGUAGE CXX

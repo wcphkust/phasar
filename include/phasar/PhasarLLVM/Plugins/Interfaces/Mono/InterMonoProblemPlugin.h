@@ -14,13 +14,15 @@
 #include <memory>
 #include <string>
 
+#include <phasar_plugins_export.h>
+
 namespace psr {
 
 class InterMonoProblemPlugin {};
 
 extern "C" std::unique_ptr<InterMonoProblemPlugin> makeInterMonoProblemPlugin();
 
-extern std::map<std::string, std::unique_ptr<InterMonoProblemPlugin> (*)()>
+extern PHASAR_PLUGINS_EXPORT std::map<std::string, std::unique_ptr<InterMonoProblemPlugin> (*)()>
     InterMonoProblemPluginFactory;
 
 } // namespace psr
