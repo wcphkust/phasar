@@ -76,7 +76,7 @@ protected:
 TEST_F(IFDSTaintAnalysisTest, TaintTest_01) {
   Initialize({pathToLLFiles + "dummy_source_sink/taint_01_cpp_dbg.ll"});
   LLVMIFDSSolver<const llvm::Value *, LLVMBasedICFG &> TaintSolver(
-      *TaintProblem, false, true);
+      *TaintProblem);
   TaintSolver.solve();
   map<int, set<string>> GroundTruth;
   GroundTruth[13] = set<string>{"12"};
@@ -86,7 +86,7 @@ TEST_F(IFDSTaintAnalysisTest, TaintTest_01) {
 TEST_F(IFDSTaintAnalysisTest, TaintTest_01_m2r) {
   Initialize({pathToLLFiles + "dummy_source_sink/taint_01_cpp_m2r_dbg.ll"});
   LLVMIFDSSolver<const llvm::Value *, LLVMBasedICFG &> TaintSolver(
-      *TaintProblem, false, true);
+      *TaintProblem);
   TaintSolver.solve();
   map<int, set<string>> GroundTruth;
   GroundTruth[4] = set<string>{"2"};
@@ -96,7 +96,7 @@ TEST_F(IFDSTaintAnalysisTest, TaintTest_01_m2r) {
 TEST_F(IFDSTaintAnalysisTest, TaintTest_02) {
   Initialize({pathToLLFiles + "dummy_source_sink/taint_02_cpp_dbg.ll"});
   LLVMIFDSSolver<const llvm::Value *, LLVMBasedICFG &> TaintSolver(
-      *TaintProblem, false, true);
+      *TaintProblem);
   TaintSolver.solve();
   map<int, set<string>> GroundTruth;
   GroundTruth[9] = set<string>{"8"};
@@ -106,7 +106,7 @@ TEST_F(IFDSTaintAnalysisTest, TaintTest_02) {
 TEST_F(IFDSTaintAnalysisTest, TaintTest_03) {
   Initialize({pathToLLFiles + "dummy_source_sink/taint_03_cpp_dbg.ll"});
   LLVMIFDSSolver<const llvm::Value *, LLVMBasedICFG &> TaintSolver(
-      *TaintProblem, false, true);
+      *TaintProblem);
   TaintSolver.solve();
   map<int, set<string>> GroundTruth;
   GroundTruth[18] = set<string>{"17"};
@@ -116,7 +116,7 @@ TEST_F(IFDSTaintAnalysisTest, TaintTest_03) {
 TEST_F(IFDSTaintAnalysisTest, TaintTest_04) {
   Initialize({pathToLLFiles + "dummy_source_sink/taint_04_cpp_dbg.ll"});
   LLVMIFDSSolver<const llvm::Value *, LLVMBasedICFG &> TaintSolver(
-      *TaintProblem, false, true);
+      *TaintProblem);
   TaintSolver.solve();
   map<int, set<string>> GroundTruth;
   GroundTruth[19] = set<string>{"18"};
@@ -127,7 +127,7 @@ TEST_F(IFDSTaintAnalysisTest, TaintTest_04) {
 TEST_F(IFDSTaintAnalysisTest, TaintTest_05) {
   Initialize({pathToLLFiles + "dummy_source_sink/taint_05_cpp_dbg.ll"});
   LLVMIFDSSolver<const llvm::Value *, LLVMBasedICFG &> TaintSolver(
-      *TaintProblem, false, true);
+      *TaintProblem);
   TaintSolver.solve();
   map<int, set<string>> GroundTruth;
   GroundTruth[22] = set<string>{"21"};
@@ -137,7 +137,7 @@ TEST_F(IFDSTaintAnalysisTest, TaintTest_05) {
 TEST_F(IFDSTaintAnalysisTest, TaintTest_06) {
   Initialize({pathToLLFiles + "dummy_source_sink/taint_06_cpp_m2r_dbg.ll"});
   LLVMIFDSSolver<const llvm::Value *, LLVMBasedICFG &> TaintSolver(
-      *TaintProblem, false, true);
+      *TaintProblem);
   TaintSolver.solve();
   map<int, set<string>> GroundTruth;
   GroundTruth[5] = set<string>{"main.0"};

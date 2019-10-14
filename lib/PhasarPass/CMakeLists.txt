@@ -1,15 +1,15 @@
 file(GLOB_RECURSE PHASARPASS_SRC *.h *.cpp)
 
 if(BUILD_SHARED_LIBS)
-	add_phasar_library(phasar_pass
-	  SHARED
-	  ${PHASARPASS_SRC}
-	)
+  add_phasar_library(phasar_pass
+    SHARED
+    ${PHASARPASS_SRC}
+  )
 else()
-	add_phasar_library(phasar_pass
-	  STATIC
-	  ${PHASARPASS_SRC}
-	)
+  add_phasar_library(phasar_pass
+    STATIC
+    ${PHASARPASS_SRC}
+  )
 endif()
 
 target_link_libraries(phasar_pass

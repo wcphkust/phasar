@@ -50,6 +50,8 @@ include("phasar_macros")
 
 option(PHASAR_BUILD_UNITTESTS "Build all tests (default is OFF)" OFF)
 
+option(PHASAR_BUILD_IR "Build IR test code (default is OFF)" OFF)
+
 option(PHASAR_BUILD_DOC "Build documentation" OFF)
 
 option(BUILD_SHARED_LIBS "Build shared libraries (default is ON)" ON)
@@ -252,14 +254,9 @@ target_link_libraries(phasar
   phasar_db
   phasar_experimental
   phasar_clang
-  phasar_controlflow
-  phasar_ifdside
-  phasar_mono
   phasar_passes
   ${PHASAR_PLUGINS_LIB}
   phasar_pointer
-  phasar_phasarllvm_utils
-  phasar_utils
   ${BOOST_PROGRAM_OPTIONS}
   ${BOOST_FILESYSTEM}
   ${BOOST_GRAPH}
@@ -271,7 +268,6 @@ target_link_libraries(phasar
   ${CMAKE_DL_LIBS}
   ${CMAKE_THREAD_LIBS_INIT}
   #${CLANG_LIBRARIES_DEBUG}
-  ${llvm_libs}
   ${CURL_LIBRARIES}
   #gtest
 )
@@ -309,8 +305,6 @@ target_link_libraries(wpdstest
   phasar_config
   phasar_controller
   phasar_db
-  phasar_experimental
-  phasar_clang
   phasar_controlflow
   phasar_ifdside
   phasar_mono
@@ -392,11 +386,16 @@ target_link_libraries(boomerangtest
   ${llvm_libs}
 )
 
-# Add Phasar unittests and .ll file generation
+# Add Phasar unittests and build all IR test code
 if (PHASAR_BUILD_UNITTESTS)
   message("Phasar unittests")
   add_subdirectory(unittests)
-  message("Generation of .ll files")
+  set(PHASAR_BUILD_IR ON)
+endif()
+
+# Build all IR test code
+if (PHASAR_BUILD_IR)
+  message("Building IR test code")
   add_subdirectory(test)
 endif()
 

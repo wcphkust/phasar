@@ -35,23 +35,12 @@
 namespace psr {
 
 IFDSEnvironmentVariableTracing::IFDSEnvironmentVariableTracing(
-    LLVMBasedICFG &ICFG, std::vector<std::string> EntryPoints = {"main"})
+    LLVMBasedICFG &ICFG, const TaintConfiguration<ExtendedValue> &TaintConfig,
+    std::vector<std::string> EntryPoints = {"main"})
     : DefaultIFDSTabulationProblem<const llvm::Instruction *, ExtendedValue,
                                    const llvm::Function *, LLVMBasedICFG &>(
           ICFG),
-      EntryPoints(EntryPoints),
-      taintConfig(std::initializer_list<
-                      TaintConfiguration<ExtendedValue>::SourceFunction>(),
-                  std::initializer_list<
-                      TaintConfiguration<ExtendedValue>::SinkFunction>()) {
-  for (auto i : DataFlowUtils::getTaintedFunctions()) {
-    taintConfig.addSource(
-        TaintConfiguration<ExtendedValue>::SourceFunction(i, false));
-  }
-  for (auto i : DataFlowUtils::getBlacklistedFunctions()) {
-    taintConfig.addSink(TaintConfiguration<ExtendedValue>::SinkFunction(
-        i, TaintConfiguration<ExtendedValue>::None()));
-  }
+      EntryPoints(EntryPoints), taintConfig(TaintConfig) {
   DefaultIFDSTabulationProblem::zerovalue = createZeroValue();
   this->solver_config.computeValues = true; // do not touch
 }
@@ -216,15 +205,17 @@ IFDSEnvironmentVariableTracing::getSummaryFlowFunction(
 std::map<const llvm::Instruction *, std::set<ExtendedValue>>
 IFDSEnvironmentVariableTracing::initialSeeds() {
   std::map<const llvm::Instruction *, std::set<ExtendedValue>> seedMap;
-
   for (const auto &entryPoint : this->EntryPoints) {
     if (taintConfig.isSink(entryPoint))
       continue;
-
     seedMap.insert(std::make_pair(&icfg.getMethod(entryPoint)->front().front(),
                                   std::set<ExtendedValue>({zeroValue()})));
   }
-
+  // additionally, add initial seeds if there are any
+  auto taintConfigSeeds = taintConfig.getInitialSeeds();
+  for (auto &seed : taintConfigSeeds) {
+    seedMap[seed.first].insert(seed.second.begin(), seed.second.end());
+  }
   return seedMap;
 }
 
