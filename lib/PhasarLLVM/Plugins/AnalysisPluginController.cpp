@@ -67,6 +67,7 @@ AnalysisPluginController::AnalysisPluginController(
         LLVMIFDSSolver<const FlowFact *, LLVMBasedICFG &> llvmifdstestsolver(
             *plugin, true);
         llvmifdstestsolver.solve();
+        llvmifdstestsolver.dumpResults();
         FinalResultsJson += llvmifdstestsolver.getAsJson();
       }
     }

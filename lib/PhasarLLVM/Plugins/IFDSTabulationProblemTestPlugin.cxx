@@ -99,7 +99,6 @@ IFDSTabulationProblemTestPlugin::getCallToRetFlowFunction(
 shared_ptr<FlowFunction<const FlowFact *>>
 IFDSTabulationProblemTestPlugin::getSummaryFlowFunction(
     const llvm::Instruction *callStmt, const llvm::Function *destMthd) {
-  cout << "IFDSTabulationProblemTestPlugin::getSummaryFlowFunction()\n";
   return nullptr;
 }
 

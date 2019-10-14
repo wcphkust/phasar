@@ -98,7 +98,6 @@ IFDSSFB901TaintAnalysis::getCallToRetFlowFunction(
 shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSFB901TaintAnalysis::getSummaryFlowFunction(
     const llvm::Instruction *callStmt, const llvm::Function *destMthd) {
-  cout << "IFDSSFB901TaintAnalysis::getSummaryFlowFunction()\n";
   return nullptr;
 }
 

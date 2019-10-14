@@ -72,7 +72,6 @@ void IFDSSimpleTaintAnalysis::printDataFlowFact(std::ostream &os,
 shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSimpleTaintAnalysis::getNormalFlowFunction(const llvm::Instruction *curr,
                                                const llvm::Instruction *succ) {
-  cout << "IFDSSimpleTaintAnalysis::getNormalFlowFunction()\n";
   if (auto Store = llvm::dyn_cast<llvm::StoreInst>(curr)) {
     struct TFF : FlowFunction<const FlowFact *> {
       const llvm::StoreInst *Store;
@@ -168,7 +167,6 @@ IFDSSimpleTaintAnalysis::getCallToRetFlowFunction(
 shared_ptr<FlowFunction<const FlowFact *>>
 IFDSSimpleTaintAnalysis::getSummaryFlowFunction(
     const llvm::Instruction *callStmt, const llvm::Function *destMthd) {
-  cout << "IFDSSimpleTaintAnalysis::getSummaryFlowFunction()\n";
   return nullptr;
 }
 
