@@ -13,7 +13,11 @@ class IDELinearConstantAnalysisTest : public ::testing::Test {
 protected:
   const std::string pathToLLFiles =
       PhasarConfig::getPhasarConfig().PhasarDirectory() +
-      "build/test/llvm_test_code/linear_constant/";
+#ifdef _WIN32
+	  "build/x64-Clang-Debug/test/llvm_test_code/linear_constant/";
+#else()
+	  "build/test/llvm_test_code/linear_constant/";
+#endif
   const std::vector<std::string> EntryPoints = {"main"};
 
   ProjectIRDB *IRDB;

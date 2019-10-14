@@ -25,7 +25,11 @@ class InterMonoTaintAnalysisTest : public ::testing::Test {
 protected:
   const std::string pathToLLFiles =
       PhasarConfig::getPhasarConfig().PhasarDirectory() +
+#ifdef _WIN32
+      "build/x64-Clang-Debug/test/llvm_test_code/taint_analysis/";
+#else()
       "build/test/llvm_test_code/taint_analysis/";
+#endif
   const std::vector<std::string> EntryPoints = {"main"};
 
 #pragma region Environment for leak checking

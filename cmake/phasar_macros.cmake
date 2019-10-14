@@ -44,7 +44,7 @@ function(add_phasar_unittest test_name)
     ${CMAKE_THREAD_LIBS_INIT}
     ${CLANG_LIBRARIES}
     ${llvm_libs}
-    curl
+    ${CURL_LIBRARIES}
     gtest
   )
 
@@ -86,21 +86,21 @@ function(generate_ll_file)
 
   # define compilation flags
   if(WIN32)
-  set(GEN_CXX_FLAGS /clang:-std=c++14 /clang:-emit-llvm /clang:-S)
-  set(GEN_C_FLAGS -emit-llvm -S)
-  else()
-  set(GEN_CXX_FLAGS -std=c++14 -emit-llvm -S)
-  set(GEN_C_FLAGS -emit-llvm -S)
+  set(FLAGPREFIX /clang:)
+  set(CXXEXCEPTIONENABLEFLAG /EHa)
   endif()
+  set(GEN_CXX_FLAGS ${CXXEXCEPTIONENABLEFLAG} ${FLAGPREFIX}-std=c++14 ${FLAGPREFIX}-emit-llvm ${FLAGPREFIX}-S)
+  set(GEN_C_FLAGS ${FLAGPREFIX}-emit-llvm ${FLAGPREFIX}-S)
+  
   set(GEN_CMD_COMMENT "compile ${GEN_LL_FILE} to LLVM IR")
   if(GEN_LL_MEM2REG)
-    list(APPEND GEN_CXX_FLAGS -Xclang -disable-O0-optnone)
-    list(APPEND GEN_C_FLAGS -Xclang -disable-O0-optnone)
+    list(APPEND GEN_CXX_FLAGS ${FLAGPREFIX}-Xclang ${FLAGPREFIX}-disable-O0-optnone)
+    list(APPEND GEN_C_FLAGS ${FLAGPREFIX}-Xclang ${FLAGPREFIX}-disable-O0-optnone)
     set(GEN_CMD_COMMENT "${GEN_CMD_COMMENT} with mem2reg optimization")
   endif()
   if(GEN_LL_DEBUG)
-    list(APPEND GEN_CXX_FLAGS -g)
-    list(APPEND GEN_C_FLAGS -g)
+    list(APPEND GEN_CXX_FLAGS ${FLAGPREFIX}-g)
+    list(APPEND GEN_C_FLAGS ${FLAGPREFIX}-g)
     set(GEN_CMD_COMMENT "${GEN_CMD_COMMENT} with/and debug information")
   endif()
 
@@ -115,7 +115,7 @@ function(generate_ll_file)
   if(GEN_LL_MEM2REG)
     add_custom_command(
       OUTPUT ${test_code_ll_file}
-      COMMAND ${GEN_CMD} ${test_code_file_path} -o ${test_code_ll_file}
+      COMMAND ${GEN_CMD} ${test_code_file_path} ${FLAGPREFIX}-o${test_code_ll_file}
       COMMAND opt -mem2reg -S ${test_code_ll_file} -o ${test_code_ll_file}
       COMMENT ${GEN_CMD_COMMENT}
       DEPENDS ${GEN_LL_FILE}
@@ -124,7 +124,7 @@ function(generate_ll_file)
   else()
     add_custom_command(
     OUTPUT ${test_code_ll_file}
-    COMMAND ${GEN_CMD} ${test_code_file_path} -o ${test_code_ll_file}
+    COMMAND ${GEN_CMD} ${test_code_file_path} ${FLAGPREFIX}-o${test_code_ll_file}
     COMMENT ${GEN_CMD_COMMENT}
     DEPENDS ${GEN_LL_FILE}
     VERBATIM

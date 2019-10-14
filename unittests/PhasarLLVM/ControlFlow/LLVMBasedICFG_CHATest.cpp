@@ -16,7 +16,11 @@ class LLVMBasedICFG_CHATest : public ::testing::Test {
 protected:
   const std::string pathToLLFiles =
       PhasarConfig::getPhasarConfig().PhasarDirectory() +
-      "build/test/llvm_test_code/";
+#ifdef _WIN32
+	  "build/x64-Clang-Debug/test/llvm_test_code/";
+#else()
+	  "build/test/llvm_test_code/";
+#endif
 };
 
 TEST_F(LLVMBasedICFG_CHATest, StaticCallSite_1) {

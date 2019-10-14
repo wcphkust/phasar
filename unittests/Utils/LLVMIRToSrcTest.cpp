@@ -18,7 +18,11 @@ class LLVMIRToSrcTest : public ::testing::Test {
 protected:
   const std::string pathToLLFiles =
       PhasarConfig::getPhasarConfig().PhasarDirectory() +
+#ifdef _WIN32
+      "build/x64-Clang-Debug/test/llvm_test_code/llvmIRtoSrc/";
+#else()
       "build/test/llvm_test_code/llvmIRtoSrc/";
+#endif
 
   ProjectIRDB *IRDB;
   LLVMTypeHierarchy *TH;

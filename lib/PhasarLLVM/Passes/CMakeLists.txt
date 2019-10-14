@@ -15,7 +15,7 @@ endif()
 target_link_libraries(phasar_passes
   phasar_utils
 
-  ${BOOST_LOG}
+  ${Boost_LOG_LIBRARY}
 
   LLVMCore
   LLVMSupport

@@ -9,15 +9,19 @@
 
 #include <iterator>
 #include <ostream>
+#include <iostream>
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/find.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/core/demangle.hpp>
 
 #include <llvm/IR/DerivedTypes.h>
 
 //#include <cxxabi.h>
+#include <Windows.h>
+#include <DbgHelp.h>
 
 #include <phasar/Utils/Macros.h>
 using namespace std;
@@ -32,7 +36,14 @@ string cxx_demangle(const string &mangled_name) {
   string result((status == 0 && demangled != NULL) ? demangled : mangled_name);
   free(demangled);
   return result;*/
-  return "";
+	std::string result;
+	char demangled[100 + 1] = { 0 };
+	if (UnDecorateSymbolName(mangled_name.c_str(), demangled, 100, UNDNAME_NAME_ONLY) > 0)
+		result = demangled;
+	std::cout << "mangled: " << mangled_name << std::endl;
+	std::cout << "------------------------------------------------------------------------" << std::endl;
+	std::cout << "demangled winapi: " << result << std::endl;
+	return result;// boost::core::demangle(mangled_name.c_str());
 }
 
 bool isConstructor(const string &mangled_name) {

@@ -17,6 +17,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(WIN32)
 	add_definitions(-D_HAS_STD_BYTE=0)
+	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 endif()
 
 if (NOT CMAKE_BUILD_TYPE)

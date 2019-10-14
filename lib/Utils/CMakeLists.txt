@@ -25,9 +25,13 @@ target_link_libraries(phasar_utils
   LLVMSupport
   LLVMBitWriter
 
-  ${BOOST_LOG}
+  ${Boost_LOG_LIBRARY}
+  ${Boost_FILESYSTEM_LIBRARY}
+  ${Boost_DATE_TIME_LIBRARY}
+  ${Boost_THREAD_LIBRARY}
 
   ${CMAKE_DL_LIBS}
+  Dbghelp
 )
 
 set_target_properties(phasar_utils

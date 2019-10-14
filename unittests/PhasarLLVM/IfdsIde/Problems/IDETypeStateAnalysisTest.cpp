@@ -14,7 +14,11 @@ class IDETypeStateAnalysisTest : public ::testing::Test {
 protected:
   const std::string pathToLLFiles =
       PhasarConfig::getPhasarConfig().PhasarDirectory() +
-      "build/test/llvm_test_code/typestate_analysis/";
+#ifdef _WIN32
+	  "build/x64-Clang-Debug/test/llvm_test_code/typestate_analysis/";
+#else()
+	  "build/test/llvm_test_code/typestate_analysis/";
+#endif
   const std::vector<std::string> EntryPoints = {"main"};
 
   ProjectIRDB *IRDB;

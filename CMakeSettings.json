@@ -1,11 +1,24 @@
 ﻿{
   "configurations": [
     {
+      "name": "x64-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [ "msvc_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": "",
+      "variables": []
+    },
+    {
       "name": "x64-Clang-Debug",
       "generator": "Ninja",
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "-DBUILD_SHARED_LIBS=off -DPHASAR_BUILD_UNITTESTS=on",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "clang_cl_x64" ],
@@ -20,7 +33,8 @@
           "value": "x64-windows",
           "type": "STRING"
         }
-      ]
+      ],
+      "cmakeToolchain": "C:/Users/mmo/Documents/Loksim/vcpkg/scripts/buildsystems/vcpkg.cmake"
     }
   ]
 }
