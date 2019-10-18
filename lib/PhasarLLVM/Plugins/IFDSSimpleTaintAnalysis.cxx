@@ -37,13 +37,13 @@ makeIFDSSimpleTaintAnalysis(LLVMBasedICFG &I, vector<string> EntryPoints) {
       new IFDSSimpleTaintAnalysis(I, EntryPoints));
 }
 
-__attribute__((constructor)) void init() {
+[[gnu::constructor]] void init() {
   cout << "init - IFDSSimpleTaintAnalysis\n";
   IFDSTabulationProblemPluginFactory["ifds_testplugin"] =
       &makeIFDSSimpleTaintAnalysis;
 }
 
-__attribute__((destructor)) void fini() {
+[[gnu::destructor]] void fini() {
   cout << "fini - IFDSSimpleTaintAnalysis\n";
 }
 
