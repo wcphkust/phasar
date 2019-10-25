@@ -43,9 +43,7 @@ makeIFDSSimpleTaintAnalysis(LLVMBasedICFG &I, vector<string> EntryPoints) {
       &makeIFDSSimpleTaintAnalysis;
 }
 
-[[gnu::destructor]] void fini() {
-  cout << "fini - IFDSSimpleTaintAnalysis\n";
-}
+[[gnu::destructor]] void fini() { cout << "fini - IFDSSimpleTaintAnalysis\n"; }
 
 const FlowFact *IFDSSimpleTaintAnalysis::createZeroValue() {
   // create a special value to represent the zero value!
