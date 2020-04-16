@@ -26,6 +26,7 @@
 #include "boost/log/support/date_time.hpp"
 // Not useful here but enable all logging macros in files that include Logger.h
 #include "boost/log/sources/record_ostream.hpp"
+#include <type_traits>
 
 namespace psr {
 
@@ -42,7 +43,6 @@ extern const std::map<severity_level, std::string> SeverityLevelToString;
 extern severity_level logFilterLevel;
 
 std::ostream &operator<<(std::ostream &os, enum severity_level l);
-
 
 #ifdef DYNAMIC_LOG
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(
@@ -74,6 +74,23 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(timestamp, "Timestamp", boost::posix_time::ptime)
 #else
 #define LOG_IF_ENABLE_BOOL(condition, computation) ((void)0)
 #define LOG_IF_ENABLE(computation) ((void)0)
+
+template <typename T> struct __lg {
+  // Make the static assert dependent from a template-parameter to prevent the
+  // compiler raising the error on declaration rather than on
+  // template-instantiation
+  static_assert(!std::is_same<void, T>::value,
+                "The dynamic log is disabled. Please move this call "
+                "to lg::get() into LOG_IF_ENABLE, or set the "
+                "cmake-option PHASAR_ENABLE_DYNAMIC_LOG");
+  static inline boost::log::sources::severity_logger<severity_level> &get() {
+    assert(false && "The dynamic log is disabled. Please move this call "
+                    "to lg::get() into LOG_IF_ENABLE, or set the "
+                    "cmake-option PHASAR_ENABLE_DYNAMIC_LOG");
+  }
+};
+
+#define lg __lg<void>
 #endif
 /**
  * A filter function.
