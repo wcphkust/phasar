@@ -57,15 +57,14 @@ IDETypeStateAnalysis::IDETypeStateAnalysis(const ProjectIRDB *IRDB,
 
 // Start formulating our analysis by specifying the parts required for IFDS
 
-shared_ptr<FlowFunction<IDETypeStateAnalysis::d_t>>
+FlowFunction<IDETypeStateAnalysis::d_t> *
 IDETypeStateAnalysis::getNormalFlowFunction(IDETypeStateAnalysis::n_t Curr,
                                             IDETypeStateAnalysis::n_t Succ) {
   // Check if Alloca's type matches the target type. If so, generate from zero
   // value.
   if (const auto *Alloca = llvm::dyn_cast<llvm::AllocaInst>(Curr)) {
     if (hasMatchingType(Alloca)) {
-      return make_shared<Gen<IDETypeStateAnalysis::d_t>>(Alloca,
-                                                         getZeroValue());
+      return new Gen<IDETypeStateAnalysis::d_t>(Alloca, getZeroValue());
     }
   }
   // Check load instructions for target type. Generate from the loaded value and
@@ -88,7 +87,7 @@ IDETypeStateAnalysis::getNormalFlowFunction(IDETypeStateAnalysis::n_t Curr,
           return {Source};
         }
       };
-      return make_shared<TSFlowFunction>(Load);
+      return new TSFlowFunction(Load);
     }
   }
   if (const auto *Gep = llvm::dyn_cast<llvm::GetElementPtrInst>(Curr)) {
@@ -136,13 +135,13 @@ IDETypeStateAnalysis::getNormalFlowFunction(IDETypeStateAnalysis::n_t Curr,
           return {Source};
         }
       };
-      return make_shared<TSFlowFunction>(Store, RelevantAliasesAndAllocas);
+      return new TSFlowFunction(Store, RelevantAliasesAndAllocas);
     }
   }
   return Identity<IDETypeStateAnalysis::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IDETypeStateAnalysis::d_t>>
+FlowFunction<IDETypeStateAnalysis::d_t> *
 IDETypeStateAnalysis::getCallFlowFunction(IDETypeStateAnalysis::n_t CallStmt,
                                           IDETypeStateAnalysis::f_t DestFun) {
   // Kill all data-flow facts if we hit a function of the target API.
@@ -154,13 +153,12 @@ IDETypeStateAnalysis::getCallFlowFunction(IDETypeStateAnalysis::n_t CallStmt,
   // standard mapping.
   if (llvm::isa<llvm::CallInst>(CallStmt) ||
       llvm::isa<llvm::InvokeInst>(CallStmt)) {
-    return make_shared<MapFactsToCallee>(llvm::ImmutableCallSite(CallStmt),
-                                         DestFun);
+    return new MapFactsToCallee(llvm::ImmutableCallSite(CallStmt), DestFun);
   }
-  assert(false && "callStmt not a CallInst nor a InvokeInst");
+  assert(false && "CallStmt not a CallInst nor a InvokeInst");
 }
 
-shared_ptr<FlowFunction<IDETypeStateAnalysis::d_t>>
+FlowFunction<IDETypeStateAnalysis::d_t> *
 IDETypeStateAnalysis::getRetFlowFunction(IDETypeStateAnalysis::n_t CallSite,
                                          IDETypeStateAnalysis::f_t CalleeFun,
                                          IDETypeStateAnalysis::n_t ExitStmt,
@@ -249,11 +247,11 @@ IDETypeStateAnalysis::getRetFlowFunction(IDETypeStateAnalysis::n_t CallSite,
       }
     }
   };
-  return make_shared<TSFlowFunction>(llvm::ImmutableCallSite(CallSite),
-                                     CalleeFun, ExitStmt, this);
+  return new TSFlowFunction(llvm::ImmutableCallSite(CallSite), CalleeFun,
+                            ExitStmt, this);
 }
 
-shared_ptr<FlowFunction<IDETypeStateAnalysis::d_t>>
+FlowFunction<IDETypeStateAnalysis::d_t> *
 IDETypeStateAnalysis::getCallToRetFlowFunction(
     IDETypeStateAnalysis::n_t CallSite, IDETypeStateAnalysis::n_t RetSite,
     set<IDETypeStateAnalysis::f_t> Callees) {
@@ -280,7 +278,7 @@ IDETypeStateAnalysis::getCallToRetFlowFunction(
           return {Source};
         }
       };
-      return make_shared<TSFlowFunction>(CallSite, getZeroValue());
+      return new TSFlowFunction(CallSite, getZeroValue());
     }
 
     // Handle all functions that are not modeld with special semantics.
@@ -298,8 +296,7 @@ IDETypeStateAnalysis::getCallToRetFlowFunction(
         if (hasMatchingType(Arg)) {
           std::set<IDETypeStateAnalysis::d_t> FactsToKill =
               getWMAliasesAndAllocas(Arg.get());
-          return make_shared<KillMultiple<IDETypeStateAnalysis::d_t>>(
-              FactsToKill);
+          return new KillMultiple<IDETypeStateAnalysis::d_t>(FactsToKill);
         }
       }
     }
@@ -307,7 +304,7 @@ IDETypeStateAnalysis::getCallToRetFlowFunction(
   return Identity<IDETypeStateAnalysis::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IDETypeStateAnalysis::d_t>>
+FlowFunction<IDETypeStateAnalysis::d_t> *
 IDETypeStateAnalysis::getSummaryFlowFunction(
     IDETypeStateAnalysis::n_t CallStmt, IDETypeStateAnalysis::f_t DestFun) {
   return nullptr;
@@ -335,7 +332,7 @@ bool IDETypeStateAnalysis::isZeroValue(IDETypeStateAnalysis::d_t D) const {
 
 // in addition provide specifications for the IDE parts
 
-shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
+EdgeFunction<IDETypeStateAnalysis::l_t> *
 IDETypeStateAnalysis::getNormalEdgeFunction(
     IDETypeStateAnalysis::n_t Curr, IDETypeStateAnalysis::d_t CurrNode,
     IDETypeStateAnalysis::n_t Succ, IDETypeStateAnalysis::d_t SuccNode) {
@@ -404,14 +401,14 @@ IDETypeStateAnalysis::getNormalEdgeFunction(
                 TSD.bottom());
           }
         };
-        return make_shared<TSAllocaEF>(TSD, Alloca);
+        return new TSAllocaEF(TSD, Alloca);
       }
     }
   }
   return EdgeIdentity<IDETypeStateAnalysis::l_t>::getInstance();
 }
 
-shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
+EdgeFunction<IDETypeStateAnalysis::l_t> *
 IDETypeStateAnalysis::getCallEdgeFunction(
     IDETypeStateAnalysis::n_t CallStmt, IDETypeStateAnalysis::d_t SrcNode,
     IDETypeStateAnalysis::f_t DestinationFunction,
@@ -419,7 +416,7 @@ IDETypeStateAnalysis::getCallEdgeFunction(
   return EdgeIdentity<IDETypeStateAnalysis::l_t>::getInstance();
 }
 
-shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
+EdgeFunction<IDETypeStateAnalysis::l_t> *
 IDETypeStateAnalysis::getReturnEdgeFunction(
     IDETypeStateAnalysis::n_t CallSite,
     IDETypeStateAnalysis::f_t CalleeFunction,
@@ -428,7 +425,7 @@ IDETypeStateAnalysis::getReturnEdgeFunction(
   return EdgeIdentity<IDETypeStateAnalysis::l_t>::getInstance();
 }
 
-shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
+EdgeFunction<IDETypeStateAnalysis::l_t> *
 IDETypeStateAnalysis::getCallToRetEdgeFunction(
     IDETypeStateAnalysis::n_t CallSite, IDETypeStateAnalysis::d_t CallNode,
     IDETypeStateAnalysis::n_t RetSite, IDETypeStateAnalysis::d_t RetSiteNode,
@@ -460,7 +457,7 @@ IDETypeStateAnalysis::getCallToRetEdgeFunction(
             OS << "Factory(" << TSD.stateToString(CurrentState) << ")";
           }
         };
-        return make_shared<TSFactoryEF>(TSD, DemangledFname, CS);
+        return new TSFactoryEF(TSD, DemangledFname, CS);
       }
     }
 
@@ -475,7 +472,7 @@ IDETypeStateAnalysis::getCallToRetEdgeFunction(
 
         if (CallNode == RetSiteNode &&
             PointsToAndAllocas.find(CallNode) != PointsToAndAllocas.end()) {
-          return make_shared<TSEdgeFunction>(TSD, DemangledFname, CS);
+          return new TSEdgeFunction(TSD, DemangledFname, CS);
         }
       }
     }
@@ -483,7 +480,7 @@ IDETypeStateAnalysis::getCallToRetEdgeFunction(
   return EdgeIdentity<IDETypeStateAnalysis::l_t>::getInstance();
 }
 
-shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
+EdgeFunction<IDETypeStateAnalysis::l_t> *
 IDETypeStateAnalysis::getSummaryEdgeFunction(
     IDETypeStateAnalysis::n_t CallStmt, IDETypeStateAnalysis::d_t CallNode,
     IDETypeStateAnalysis::n_t RetSite, IDETypeStateAnalysis::d_t RetSiteNode) {
@@ -510,9 +507,9 @@ IDETypeStateAnalysis::join(IDETypeStateAnalysis::l_t Lhs,
   }
 }
 
-shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
+EdgeFunction<IDETypeStateAnalysis::l_t> *
 IDETypeStateAnalysis::allTopFunction() {
-  return make_shared<AllTop<IDETypeStateAnalysis::l_t>>(TOP);
+  return new AllTop<IDETypeStateAnalysis::l_t>(TOP);
 }
 
 void IDETypeStateAnalysis::printNode(std::ostream &OS, n_t N) const {
@@ -533,18 +530,17 @@ void IDETypeStateAnalysis::printEdgeFact(ostream &OS,
   OS << TSD.stateToString(L);
 }
 
-shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
+EdgeFunction<IDETypeStateAnalysis::l_t> *
 IDETypeStateAnalysis::TSEdgeFunctionComposer::joinWith(
-    shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>> OtherFunction) {
-  if (OtherFunction.get() == this ||
-      OtherFunction->equal_to(this->shared_from_this())) {
-    return this->shared_from_this();
+    EdgeFunction<IDETypeStateAnalysis::l_t> *OtherFunction) {
+  if (OtherFunction == this || OtherFunction->equal_to(this)) {
+    return this;
   }
-  if (auto *AT = dynamic_cast<AllTop<IDETypeStateAnalysis::l_t> *>(
-          OtherFunction.get())) {
-    return this->shared_from_this();
+  if (auto *AT =
+          dynamic_cast<AllTop<IDETypeStateAnalysis::l_t> *>(OtherFunction)) {
+    return this;
   }
-  return make_shared<AllBottom<IDETypeStateAnalysis::l_t>>(botElement);
+  return new AllBottom<IDETypeStateAnalysis::l_t>(botElement);
 }
 
 IDETypeStateAnalysis::l_t IDETypeStateAnalysis::TSEdgeFunction::computeTarget(
@@ -558,46 +554,44 @@ IDETypeStateAnalysis::l_t IDETypeStateAnalysis::TSEdgeFunction::computeTarget(
   return CurrentState;
 }
 
-std::shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
+EdgeFunction<IDETypeStateAnalysis::l_t> *
 IDETypeStateAnalysis::TSEdgeFunction::composeWith(
-    std::shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>> SecondFunction) {
+    EdgeFunction<IDETypeStateAnalysis::l_t> *SecondFunction) {
   if (auto *AB = dynamic_cast<AllBottom<IDETypeStateAnalysis::l_t> *>(
-          SecondFunction.get())) {
-    return this->shared_from_this();
+          SecondFunction)) {
+    return this;
   }
   if (auto *EI = dynamic_cast<EdgeIdentity<IDETypeStateAnalysis::l_t> *>(
-          SecondFunction.get())) {
-    return this->shared_from_this();
+          SecondFunction)) {
+    return this;
   }
-  return make_shared<TSEdgeFunctionComposer>(this->shared_from_this(),
-                                             SecondFunction, TSD.bottom());
+  return new TSEdgeFunctionComposer(this, SecondFunction, TSD.bottom());
 }
 
-std::shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
+EdgeFunction<IDETypeStateAnalysis::l_t> *
 IDETypeStateAnalysis::TSEdgeFunction::joinWith(
-    std::shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>> OtherFunction) {
-  if (OtherFunction.get() == this ||
-      OtherFunction->equal_to(this->shared_from_this())) {
-    return this->shared_from_this();
+    EdgeFunction<IDETypeStateAnalysis::l_t> *OtherFunction) {
+  if (OtherFunction == this || OtherFunction->equal_to(this)) {
+    return this;
   }
   // if (auto *EI = dynamic_cast<EdgeIdentity<IDETypeStateAnalysis::l_t> *>(
-  //         otherFunction.get())) {
+  //         OtherFunction.get())) {
   //   return this->shared_from_this();
   // }
-  if (auto *AT = dynamic_cast<AllTop<IDETypeStateAnalysis::l_t> *>(
-          OtherFunction.get())) {
-    return this->shared_from_this();
+  if (auto *AT =
+          dynamic_cast<AllTop<IDETypeStateAnalysis::l_t> *>(OtherFunction)) {
+    return this;
   }
-  return make_shared<AllBottom<IDETypeStateAnalysis::l_t>>(TSD.bottom());
+  return new AllBottom<IDETypeStateAnalysis::l_t>(TSD.bottom());
 }
 
 bool IDETypeStateAnalysis::TSEdgeFunction::equal_to(
-    std::shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>> Other) const {
+    EdgeFunction<IDETypeStateAnalysis::l_t> *Other) const {
   if (auto *TSEF =
-          dynamic_cast<IDETypeStateAnalysis::TSEdgeFunction *>(Other.get())) {
+          dynamic_cast<IDETypeStateAnalysis::TSEdgeFunction *>(Other)) {
     return this->CurrentState == TSEF->CurrentState;
   }
-  return this == Other.get();
+  return this == Other;
 }
 
 void IDETypeStateAnalysis::TSEdgeFunction::print(ostream &OS,

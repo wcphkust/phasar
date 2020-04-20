@@ -11,7 +11,6 @@
 #define PHASAR_PHASARLLVM_IFDSIDE_PROBLEMS_IFDSLINEARCONSTANTANALYSIS_H_
 
 #include <map>
-#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -74,22 +73,21 @@ public:
 
   ~IFDSLinearConstantAnalysis() override = default;
 
-  std::shared_ptr<FlowFunction<d_t>> getNormalFlowFunction(n_t curr,
-                                                           n_t succ) override;
+  FlowFunction<d_t> *getNormalFlowFunction(n_t curr, n_t succ) override;
 
-  std::shared_ptr<FlowFunction<d_t>> getCallFlowFunction(n_t callStmt,
+  FlowFunction<d_t> * getCallFlowFunction(n_t callStmt,
                                                          f_t destFun) override;
 
-  std::shared_ptr<FlowFunction<d_t>> getRetFlowFunction(n_t callSite,
+  FlowFunction<d_t> * getRetFlowFunction(n_t callSite,
                                                         f_t calleeFun,
                                                         n_t exitStmt,
                                                         n_t retSite) override;
 
-  std::shared_ptr<FlowFunction<d_t>> getCallToRetFlowFunction(
+  FlowFunction<d_t> *getCallToRetFlowFunction(
       n_t callSite, n_t retSite,
       std::set<IFDSLinearConstantAnalysis::f_t> callees) override;
 
-  std::shared_ptr<FlowFunction<d_t>>
+  FlowFunction<d_t> *
   getSummaryFlowFunction(n_t callStmt, f_t destFun) override;
 
   std::map<n_t, std::set<d_t>> initialSeeds() override;

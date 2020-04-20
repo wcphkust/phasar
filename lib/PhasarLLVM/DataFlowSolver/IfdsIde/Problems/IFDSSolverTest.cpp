@@ -37,19 +37,19 @@ IFDSSolverTest::IFDSSolverTest(const ProjectIRDB *IRDB,
   IFDSSolverTest::ZeroValue = createZeroValue();
 }
 
-shared_ptr<FlowFunction<IFDSSolverTest::d_t>>
+FlowFunction<IFDSSolverTest::d_t> *
 IFDSSolverTest::getNormalFlowFunction(IFDSSolverTest::n_t Curr,
                                       IFDSSolverTest::n_t Succ) {
   return Identity<IFDSSolverTest::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSSolverTest::d_t>>
+FlowFunction<IFDSSolverTest::d_t> *
 IFDSSolverTest::getCallFlowFunction(IFDSSolverTest::n_t CallStmt,
                                     IFDSSolverTest::f_t DestFun) {
   return Identity<IFDSSolverTest::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSSolverTest::d_t>>
+FlowFunction<IFDSSolverTest::d_t> *
 IFDSSolverTest::getRetFlowFunction(IFDSSolverTest::n_t CallSite,
                                    IFDSSolverTest::f_t CalleeFun,
                                    IFDSSolverTest::n_t ExitStmt,
@@ -57,14 +57,14 @@ IFDSSolverTest::getRetFlowFunction(IFDSSolverTest::n_t CallSite,
   return Identity<IFDSSolverTest::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSSolverTest::d_t>>
+FlowFunction<IFDSSolverTest::d_t> *
 IFDSSolverTest::getCallToRetFlowFunction(IFDSSolverTest::n_t CallSite,
                                          IFDSSolverTest::n_t RetSite,
                                          set<IFDSSolverTest::f_t> Callees) {
   return Identity<IFDSSolverTest::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSSolverTest::d_t>>
+FlowFunction<IFDSSolverTest::d_t> *
 IFDSSolverTest::getSummaryFlowFunction(IFDSSolverTest::n_t CallStmt,
                                        IFDSSolverTest::f_t DestFun) {
   return nullptr;

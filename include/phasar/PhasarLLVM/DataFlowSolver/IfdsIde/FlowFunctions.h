@@ -27,15 +27,15 @@ namespace psr {
 template <typename N, typename D, typename F> class FlowFunctions {
 public:
   virtual ~FlowFunctions() = default;
-  virtual std::shared_ptr<FlowFunction<D>> getNormalFlowFunction(N curr,
+  virtual FlowFunction<D> * getNormalFlowFunction(N curr,
                                                                  N succ) = 0;
-  virtual std::shared_ptr<FlowFunction<D>> getCallFlowFunction(N callStmt,
+  virtual FlowFunction<D> * getCallFlowFunction(N callStmt,
                                                                F destFun) = 0;
-  virtual std::shared_ptr<FlowFunction<D>>
+  virtual FlowFunction<D> *
   getRetFlowFunction(N callSite, F calleeFun, N exitStmt, N retSite) = 0;
-  virtual std::shared_ptr<FlowFunction<D>>
+  virtual FlowFunction<D> *
   getCallToRetFlowFunction(N callSite, N retSite, std::set<F> callees) = 0;
-  virtual std::shared_ptr<FlowFunction<D>>
+  virtual FlowFunction<D> *
   getSummaryFlowFunction(N curr, F destFun) = 0;
 };
 } // namespace  psr

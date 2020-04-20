@@ -25,7 +25,7 @@
 
 namespace psr {
 
-extern const std::shared_ptr<AllBottom<BinaryDomain>> ALLBOTTOM;
+extern const AllBottom<BinaryDomain> *ALL_BOTTOM;
 
 /**
  * This class promotes a given IFDSTabulationProblem to an IDETabulationProblem
@@ -48,29 +48,25 @@ public:
     this->ZeroValue = Problem.createZeroValue();
   }
 
-  std::shared_ptr<FlowFunction<D>> getNormalFlowFunction(N curr,
-                                                         N succ) override {
+  FlowFunction<D> *getNormalFlowFunction(N curr, N succ) override {
     return Problem.getNormalFlowFunction(curr, succ);
   }
 
-  std::shared_ptr<FlowFunction<D>> getCallFlowFunction(N callStmt,
-                                                       F destFun) override {
+  FlowFunction<D> *getCallFlowFunction(N callStmt, F destFun) override {
     return Problem.getCallFlowFunction(callStmt, destFun);
   }
 
-  std::shared_ptr<FlowFunction<D>>
-  getRetFlowFunction(N callSite, F calleeFun, N exitStmt, N retSite) override {
+  FlowFunction<D> *getRetFlowFunction(N callSite, F calleeFun, N exitStmt,
+                                      N retSite) override {
     return Problem.getRetFlowFunction(callSite, calleeFun, exitStmt, retSite);
   }
 
-  std::shared_ptr<FlowFunction<D>>
-  getCallToRetFlowFunction(N callSite, N retSite,
-                           std::set<F> callees) override {
+  FlowFunction<D> *getCallToRetFlowFunction(N callSite, N retSite,
+                                            std::set<F> callees) override {
     return Problem.getCallToRetFlowFunction(callSite, retSite, callees);
   }
 
-  std::shared_ptr<FlowFunction<D>> getSummaryFlowFunction(N callStmt,
-                                                          F destFun) override {
+  FlowFunction<D> *getSummaryFlowFunction(N callStmt, F destFun) override {
     return Problem.getSummaryFlowFunction(callStmt, destFun);
   }
 
@@ -94,28 +90,28 @@ public:
     }
   }
 
-  std::shared_ptr<EdgeFunction<BinaryDomain>> allTopFunction() override {
-    return std::make_shared<AllTop<BinaryDomain>>(BinaryDomain::TOP);
+  EdgeFunction<BinaryDomain> *allTopFunction() override {
+    return new AllTop<BinaryDomain>(BinaryDomain::TOP);
   }
 
-  std::shared_ptr<EdgeFunction<BinaryDomain>>
-  getNormalEdgeFunction(N src, D srcNode, N tgt, D tgtNode) override {
+  EdgeFunction<BinaryDomain> *getNormalEdgeFunction(N src, D srcNode, N tgt,
+                                                    D tgtNode) override {
     if (Problem.isZeroValue(srcNode))
       return ALLBOTTOM;
     else
       return EdgeIdentity<BinaryDomain>::getInstance();
   }
 
-  std::shared_ptr<EdgeFunction<BinaryDomain>>
-  getCallEdgeFunction(N callStmt, D srcNode, F destinationFunction,
-                      D destNode) override {
+  EdgeFunction<BinaryDomain> *getCallEdgeFunction(N callStmt, D srcNode,
+                                                  F destinationFunction,
+                                                  D destNode) override {
     if (Problem.isZeroValue(srcNode))
       return ALLBOTTOM;
     else
       return EdgeIdentity<BinaryDomain>::getInstance();
   }
 
-  std::shared_ptr<EdgeFunction<BinaryDomain>>
+  EdgeFunction<BinaryDomain> *
   getReturnEdgeFunction(N callSite, F calleeFunction, N exitStmt, D exitNode,
                         N returnSite, D retNode) override {
     if (Problem.isZeroValue(exitNode))
@@ -124,7 +120,7 @@ public:
       return EdgeIdentity<BinaryDomain>::getInstance();
   }
 
-  std::shared_ptr<EdgeFunction<BinaryDomain>>
+  EdgeFunction<BinaryDomain> *
   getCallToRetEdgeFunction(N callStmt, D callNode, N returnSite,
                            D returnSideNode, std::set<F> callees) override {
     if (Problem.isZeroValue(callNode))
@@ -133,9 +129,9 @@ public:
       return EdgeIdentity<BinaryDomain>::getInstance();
   }
 
-  std::shared_ptr<EdgeFunction<BinaryDomain>>
-  getSummaryEdgeFunction(N callStmt, D callNode, N retSite,
-                         D retSiteNode) override {
+  EdgeFunction<BinaryDomain> *getSummaryEdgeFunction(N callStmt, D callNode,
+                                                     N retSite,
+                                                     D retSiteNode) override {
     return EdgeIdentity<BinaryDomain>::getInstance();
   }
 

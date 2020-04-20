@@ -33,7 +33,7 @@ IFDSTypeAnalysis::IFDSTypeAnalysis(const ProjectIRDB *IRDB,
   IFDSTypeAnalysis::ZeroValue = createZeroValue();
 }
 
-shared_ptr<FlowFunction<IFDSTypeAnalysis::d_t>>
+FlowFunction<IFDSTypeAnalysis::d_t> *
 IFDSTypeAnalysis::getNormalFlowFunction(IFDSTypeAnalysis::n_t Curr,
                                         IFDSTypeAnalysis::n_t Succ) {
   struct TAFF : FlowFunction<IFDSTypeAnalysis::d_t> {
@@ -42,10 +42,10 @@ IFDSTypeAnalysis::getNormalFlowFunction(IFDSTypeAnalysis::n_t Curr,
       return set<IFDSTypeAnalysis::d_t>{};
     }
   };
-  return make_shared<TAFF>();
+  return new TAFF();
 }
 
-shared_ptr<FlowFunction<IFDSTypeAnalysis::d_t>>
+FlowFunction<IFDSTypeAnalysis::d_t> *
 IFDSTypeAnalysis::getCallFlowFunction(IFDSTypeAnalysis::n_t CallStmt,
                                       IFDSTypeAnalysis::f_t DestFun) {
   struct TAFF : FlowFunction<IFDSTypeAnalysis::d_t> {
@@ -54,10 +54,10 @@ IFDSTypeAnalysis::getCallFlowFunction(IFDSTypeAnalysis::n_t CallStmt,
       return set<IFDSTypeAnalysis::d_t>{};
     }
   };
-  return make_shared<TAFF>();
+  return new TAFF();
 }
 
-shared_ptr<FlowFunction<IFDSTypeAnalysis::d_t>>
+FlowFunction<IFDSTypeAnalysis::d_t> *
 IFDSTypeAnalysis::getRetFlowFunction(IFDSTypeAnalysis::n_t CallSite,
                                      IFDSTypeAnalysis::f_t CalleeFun,
                                      IFDSTypeAnalysis::n_t ExitStmt,
@@ -68,10 +68,10 @@ IFDSTypeAnalysis::getRetFlowFunction(IFDSTypeAnalysis::n_t CallSite,
       return set<IFDSTypeAnalysis::d_t>{};
     }
   };
-  return make_shared<TAFF>();
+  return new TAFF();
 }
 
-shared_ptr<FlowFunction<IFDSTypeAnalysis::d_t>>
+FlowFunction<IFDSTypeAnalysis::d_t> *
 IFDSTypeAnalysis::getCallToRetFlowFunction(IFDSTypeAnalysis::n_t CallSite,
                                            IFDSTypeAnalysis::n_t RetSite,
                                            set<IFDSTypeAnalysis::f_t> Callees) {
@@ -81,10 +81,10 @@ IFDSTypeAnalysis::getCallToRetFlowFunction(IFDSTypeAnalysis::n_t CallSite,
       return set<IFDSTypeAnalysis::d_t>{};
     }
   };
-  return make_shared<TAFF>();
+  return new TAFF();
 }
 
-shared_ptr<FlowFunction<IFDSTypeAnalysis::d_t>>
+FlowFunction<IFDSTypeAnalysis::d_t> *
 IFDSTypeAnalysis::getSummaryFlowFunction(IFDSTypeAnalysis::n_t Curr,
                                          IFDSTypeAnalysis::f_t DestFun) {
   return nullptr;

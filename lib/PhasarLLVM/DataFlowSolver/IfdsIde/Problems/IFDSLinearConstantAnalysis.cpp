@@ -57,21 +57,21 @@ IFDSLinearConstantAnalysis::IFDSLinearConstantAnalysis(
   IFDSLinearConstantAnalysis::ZeroValue = createZeroValue();
 }
 
-shared_ptr<FlowFunction<IFDSLinearConstantAnalysis::d_t>>
+FlowFunction<IFDSLinearConstantAnalysis::d_t> *
 IFDSLinearConstantAnalysis::getNormalFlowFunction(
     IFDSLinearConstantAnalysis::n_t Curr,
     IFDSLinearConstantAnalysis::n_t Succ) {
   return Identity<IFDSLinearConstantAnalysis::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSLinearConstantAnalysis::d_t>>
+FlowFunction<IFDSLinearConstantAnalysis::d_t> *
 IFDSLinearConstantAnalysis::getCallFlowFunction(
     IFDSLinearConstantAnalysis::n_t CallStmt,
     IFDSLinearConstantAnalysis::f_t DestFun) {
   return Identity<IFDSLinearConstantAnalysis::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSLinearConstantAnalysis::d_t>>
+FlowFunction<IFDSLinearConstantAnalysis::d_t> *
 IFDSLinearConstantAnalysis::getRetFlowFunction(
     IFDSLinearConstantAnalysis::n_t CallSite,
     IFDSLinearConstantAnalysis::f_t CalleeFun,
@@ -80,7 +80,7 @@ IFDSLinearConstantAnalysis::getRetFlowFunction(
   return Identity<IFDSLinearConstantAnalysis::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSLinearConstantAnalysis::d_t>>
+FlowFunction<IFDSLinearConstantAnalysis::d_t> *
 IFDSLinearConstantAnalysis::getCallToRetFlowFunction(
     IFDSLinearConstantAnalysis::n_t CallSite,
     IFDSLinearConstantAnalysis::n_t RetSite,
@@ -88,7 +88,7 @@ IFDSLinearConstantAnalysis::getCallToRetFlowFunction(
   return Identity<IFDSLinearConstantAnalysis::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSLinearConstantAnalysis::d_t>>
+FlowFunction<IFDSLinearConstantAnalysis::d_t> *
 IFDSLinearConstantAnalysis::getSummaryFlowFunction(
     IFDSLinearConstantAnalysis::n_t CallStmt,
     IFDSLinearConstantAnalysis::f_t DestFun) {

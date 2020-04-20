@@ -56,10 +56,10 @@ IFDSSimpleTaintAnalysis::IFDSSimpleTaintAnalysis(
     std::set<std::string> EntryPoints)
     : IFDSTabulationProblemPlugin(IRDB, TH, ICF, PT, std::move(EntryPoints)) {}
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+FlowFunction<const llvm::Value *> *
 IFDSSimpleTaintAnalysis::getNormalFlowFunction(const llvm::Instruction *Curr,
                                                const llvm::Instruction *Succ) {
-  if (const auto *Store = llvm::dyn_cast<llvm::StoreInst>(Curr)) {
+  if (const auto Store = llvm::dyn_cast<llvm::StoreInst>(Curr)) {
     struct STA : FlowFunction<const llvm::Value *> {
       const llvm::StoreInst *Store;
       STA(const llvm::StoreInst *S) : Store(S) {}
@@ -71,17 +71,17 @@ IFDSSimpleTaintAnalysis::getNormalFlowFunction(const llvm::Instruction *Curr,
         }
       }
     };
-    return make_shared<STA>(Store);
+    return new STA(Store);
   }
   return Identity<const llvm::Value *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+FlowFunction<const llvm::Value *> *
 IFDSSimpleTaintAnalysis::getCallFlowFunction(const llvm::Instruction *CallStmt,
                                              const llvm::Function *DestFun) {
-  if (const auto *Call = llvm::dyn_cast<llvm::CallInst>(CallStmt)) {
+  if (const auto Call = llvm::dyn_cast<llvm::CallInst>(CallStmt)) {
     if (DestFun->getName().str() == "taint") {
-      return make_shared<Gen<const llvm::Value *>>(Call, getZeroValue());
+      return new Gen<const llvm::Value *>(Call, getZeroValue());
     } else if (DestFun->getName().str() == "leak") {
     } else {
     }
@@ -89,7 +89,7 @@ IFDSSimpleTaintAnalysis::getCallFlowFunction(const llvm::Instruction *CallStmt,
   return Identity<const llvm::Value *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+FlowFunction<const llvm::Value *> *
 IFDSSimpleTaintAnalysis::getRetFlowFunction(const llvm::Instruction *CallSite,
                                             const llvm::Function *CalleeFun,
                                             const llvm::Instruction *ExitStmt,
@@ -97,14 +97,14 @@ IFDSSimpleTaintAnalysis::getRetFlowFunction(const llvm::Instruction *CallSite,
   return Identity<const llvm::Value *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+FlowFunction<const llvm::Value *> *
 IFDSSimpleTaintAnalysis::getCallToRetFlowFunction(
     const llvm::Instruction *CallSite, const llvm::Instruction *RetSite,
     set<const llvm::Function *> Callees) {
   return Identity<const llvm::Value *>::getInstance();
 }
 
-shared_ptr<FlowFunction<const llvm::Value *>>
+FlowFunction<const llvm::Value *> *
 IFDSSimpleTaintAnalysis::getSummaryFlowFunction(
     const llvm::Instruction *CallStmt, const llvm::Function *DestFun) {
   return nullptr;

@@ -44,7 +44,7 @@ IFDSUninitializedVariables::IFDSUninitializedVariables(
   IFDSUninitializedVariables::ZeroValue = createZeroValue();
 }
 
-shared_ptr<FlowFunction<IFDSUninitializedVariables::d_t>>
+FlowFunction<IFDSUninitializedVariables::d_t> *
 IFDSUninitializedVariables::getNormalFlowFunction(
     IFDSUninitializedVariables::n_t Curr,
     IFDSUninitializedVariables::n_t Succ) {
@@ -173,11 +173,11 @@ IFDSUninitializedVariables::getNormalFlowFunction(
         return {Source};
       }
     };
-    return make_shared<UVFF>(Store, UndefValueUses, ZeroValue);
+    return new UVFF(Store, UndefValueUses, ZeroValue);
   }
   if (const auto *Alloc = llvm::dyn_cast<llvm::AllocaInst>(Curr)) {
 
-    return make_shared<LambdaFlow<IFDSUninitializedVariables::d_t>>(
+    return new LambdaFlow<IFDSUninitializedVariables::d_t>(
         [Alloc, this](IFDSUninitializedVariables::d_t Source)
             -> set<IFDSUninitializedVariables::d_t> {
           if (isZeroValue(Source)) {
@@ -230,13 +230,13 @@ IFDSUninitializedVariables::getNormalFlowFunction(
       return {Source};
     }
   };
-  return make_shared<UVFF>(Curr, UndefValueUses);
+  return new UVFF(Curr, UndefValueUses);
 
   // otherwise we do not care and nothing changes
   return Identity<IFDSUninitializedVariables::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSUninitializedVariables::d_t>>
+FlowFunction<IFDSUninitializedVariables::d_t> *
 IFDSUninitializedVariables::getCallFlowFunction(
     IFDSUninitializedVariables::n_t CallStmt,
     IFDSUninitializedVariables::f_t DestFun) {
@@ -315,12 +315,12 @@ IFDSUninitializedVariables::getCallFlowFunction(
         }
       }
     };
-    return make_shared<UVFF>(DestFun, CallSite, ZeroValue);
+    return new UVFF(DestFun, CallSite, ZeroValue);
   }
   return Identity<IFDSUninitializedVariables::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSUninitializedVariables::d_t>>
+FlowFunction<IFDSUninitializedVariables::d_t> *
 IFDSUninitializedVariables::getRetFlowFunction(
     IFDSUninitializedVariables::n_t CallSite,
     IFDSUninitializedVariables::f_t CalleeFun,
@@ -359,13 +359,13 @@ IFDSUninitializedVariables::getRetFlowFunction(
         return Ret;
       }
     };
-    return make_shared<UVFF>(CS, ExitStmt);
+    return new UVFF(CS, ExitStmt);
   }
   // kill everything else
   return KillAll<IFDSUninitializedVariables::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSUninitializedVariables::d_t>>
+FlowFunction<IFDSUninitializedVariables::d_t> *
 IFDSUninitializedVariables::getCallToRetFlowFunction(
     IFDSUninitializedVariables::n_t CallSite,
     IFDSUninitializedVariables::n_t RetSite,
@@ -376,7 +376,7 @@ IFDSUninitializedVariables::getCallToRetFlowFunction(
   if (llvm::isa<llvm::CallInst>(CallSite) ||
       llvm::isa<llvm::InvokeInst>(CallSite)) {
     llvm::ImmutableCallSite CS(CallSite);
-    return make_shared<LambdaFlow<IFDSUninitializedVariables::d_t>>(
+    return new LambdaFlow<IFDSUninitializedVariables::d_t>(
         [CS](IFDSUninitializedVariables::d_t Source)
             -> set<IFDSUninitializedVariables::d_t> {
           if (Source->getType()->isPointerTy()) {
@@ -395,7 +395,7 @@ IFDSUninitializedVariables::getCallToRetFlowFunction(
   return Identity<IFDSUninitializedVariables::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSUninitializedVariables::d_t>>
+FlowFunction<IFDSUninitializedVariables::d_t> *
 IFDSUninitializedVariables::getSummaryFlowFunction(
     IFDSUninitializedVariables::n_t CallStmt,
     IFDSUninitializedVariables::f_t DestFun) {

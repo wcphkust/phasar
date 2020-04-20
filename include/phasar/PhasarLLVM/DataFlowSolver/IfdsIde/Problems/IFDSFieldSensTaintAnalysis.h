@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <map>
-#include <memory>
 #include <set>
 #include <string>
 
@@ -55,26 +54,26 @@ public:
       std::set<std::string> EntryPoints = {"main"});
   ~IFDSFieldSensTaintAnalysis() override = default;
 
-  std::shared_ptr<FlowFunction<ExtendedValue>>
+  FlowFunction<ExtendedValue> *
   getNormalFlowFunction(const llvm::Instruction *curr,
                         const llvm::Instruction *succ) override;
 
-  std::shared_ptr<FlowFunction<ExtendedValue>>
+  FlowFunction<ExtendedValue> *
   getCallFlowFunction(const llvm::Instruction *callStmt,
                       const llvm::Function *destFun) override;
 
-  std::shared_ptr<FlowFunction<ExtendedValue>>
+  FlowFunction<ExtendedValue> *
   getRetFlowFunction(const llvm::Instruction *callSite,
                      const llvm::Function *calleeFun,
                      const llvm::Instruction *exitStmt,
                      const llvm::Instruction *retSite) override;
 
-  std::shared_ptr<FlowFunction<ExtendedValue>>
+  FlowFunction<ExtendedValue> *
   getCallToRetFlowFunction(const llvm::Instruction *callSite,
                            const llvm::Instruction *retSite,
                            std::set<const llvm::Function *> callees) override;
 
-  std::shared_ptr<FlowFunction<ExtendedValue>>
+  FlowFunction<ExtendedValue> *
   getSummaryFlowFunction(const llvm::Instruction *callStmt,
                          const llvm::Function *destFun) override;
 

@@ -56,6 +56,7 @@ protected:
   D ZeroValue;
   std::set<std::string> EntryPoints;
   [[maybe_unused]] SoundnessFlag SF = SoundnessFlag::UNUSED;
+  std::set<FlowFunction<D> *> registeredFlowFunctionSingleton;
 
 public:
   using ConfigurationTy = HasNoConfigurationType;
@@ -76,6 +77,10 @@ public:
   D getZeroValue() const { return ZeroValue; }
 
   std::set<std::string> getEntryPoints() const { return EntryPoints; }
+
+  std::set<FlowFunction<D> *> getRegisteredFlowFunctionSingleton() const {
+    return registeredFlowFunctionSingleton;
+  }
 
   const ProjectIRDB *getProjectIRDB() const { return IRDB; }
 

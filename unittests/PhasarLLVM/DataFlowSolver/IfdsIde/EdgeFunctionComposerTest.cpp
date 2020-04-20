@@ -12,88 +12,109 @@ static unsigned CurrMulTwoEfId = 0;
 static unsigned CurrAddTwoEfId = 0;
 
 struct MyEFC : EdgeFunctionComposer<int> {
-  MyEFC(std::shared_ptr<EdgeFunction<int>> F,
-        std::shared_ptr<EdgeFunction<int>> G)
+  MyEFC(EdgeFunction<int> *F, EdgeFunction<int> *G)
       : EdgeFunctionComposer<int>(std::move(F), std::move(G)){};
-  std::shared_ptr<EdgeFunction<int>>
-  joinWith(std::shared_ptr<EdgeFunction<int>> OtherFunction) override {
-    return std::make_shared<AllBottom<int>>(-1);
-  };
+
+  ~MyEFC() override = default;
+
+  EdgeFunction<int> *joinWith(EdgeFunction<int> *otherFunction) override {
+    return new AllBottom<int>(-1);
+  }
 };
 
-struct MulTwoEF : EdgeFunction<int>, std::enable_shared_from_this<MulTwoEF> {
+struct MulTwoEF : EdgeFunction<int> {
 private:
   const unsigned MulTwoEfId;
 
 public:
   MulTwoEF(unsigned Id) : MulTwoEfId(Id){};
+
+  ~MulTwoEF() override = default;
+
   int computeTarget(int Source) override { return Source * 2; };
-  std::shared_ptr<EdgeFunction<int>>
-  composeWith(std::shared_ptr<EdgeFunction<int>> SecondFunction) override {
-    return std::make_shared<MyEFC>(this->shared_from_this(), SecondFunction);
+
+  EdgeFunction<int> *composeWith(EdgeFunction<int> *SecondFunction) override {
+    return new MyEFC(this, SecondFunction);
   }
-  std::shared_ptr<EdgeFunction<int>>
-  joinWith(std::shared_ptr<EdgeFunction<int>> OtherFunction) override {
-    return std::make_shared<AllBottom<int>>(-1);
+
+  EdgeFunction<int> *joinWith(EdgeFunction<int> *OtherFunction) override {
+    return new AllBottom<int>(-1);
   };
-  bool equal_to(std::shared_ptr<EdgeFunction<int>> Other) const override {
-    return this == Other.get();
+
+  bool equal_to(EdgeFunction<int> *Other) const override {
+    return this == Other;
   }
+
   void print(std::ostream &Os, bool IsForDebug = false) const override {
     Os << "MulTwoEF_" << MulTwoEfId;
   }
 };
 
-struct AddTwoEF : EdgeFunction<int>, std::enable_shared_from_this<AddTwoEF> {
+struct AddTwoEF : EdgeFunction<int> {
 private:
   const unsigned AddTwoEfId;
 
 public:
   AddTwoEF(unsigned Id) : AddTwoEfId(Id){};
+
+  ~AddTwoEF() override = default;
+
   int computeTarget(int Source) override { return Source + 2; };
-  std::shared_ptr<EdgeFunction<int>>
-  composeWith(std::shared_ptr<EdgeFunction<int>> SecondFunction) override {
-    return std::make_shared<MyEFC>(this->shared_from_this(), SecondFunction);
+ 
+  EdgeFunction<int> *composeWith(EdgeFunction<int> *SecondFunction) override {
+    return new MyEFC(this, SecondFunction);
   }
-  std::shared_ptr<EdgeFunction<int>>
-  joinWith(std::shared_ptr<EdgeFunction<int>> OtherFunction) override {
-    return std::make_shared<AllBottom<int>>(-1);
+ 
+  EdgeFunction<int> *joinWith(EdgeFunction<int> *OtherFunction) override {
+    return new AllBottom<int>(-1);
   };
-  bool equal_to(std::shared_ptr<EdgeFunction<int>> Other) const override {
-    return this == Other.get();
+ 
+  bool equal_to(EdgeFunction<int> *Other) const override {
+    return this == Other;
   }
+ 
   void print(std::ostream &Os, bool IsForDebug = false) const override {
     Os << "AddTwoEF_" << AddTwoEfId;
   }
 };
 
 TEST(EdgeFunctionComposerTest, HandleEFIDs) {
-  auto EF1 = std::make_shared<AddTwoEF>(++CurrAddTwoEfId);
-  auto EF2 = std::make_shared<AddTwoEF>(++CurrAddTwoEfId);
+  auto EF1 = new AddTwoEF(++CurrAddTwoEfId);
+  auto EF2 = new AddTwoEF(++CurrAddTwoEfId);
   std::cout << "My EF : " << EF1->str() << " " << EF2->str() << '\n';
   EXPECT_EQ("AddTwoEF_1", EF1->str());
   EXPECT_EQ("AddTwoEF_2", EF2->str());
-  auto EFC1 = std::make_shared<MyEFC>(EF1, EF2);
-  auto EFC2 = std::make_shared<MyEFC>(EF2, EdgeIdentity<int>::getInstance());
+  auto EFC1 = new MyEFC(EF1, EF2);
+  auto EFC2 = new MyEFC(EF2, EdgeIdentity<int>::getInstance());
   std::cout << "My EFC: " << EFC1->str() << " " << EFC2->str() << '\n';
   EXPECT_EQ("COMP[ AddTwoEF_1 , AddTwoEF_2 ] (EF:1)", EFC1->str());
   EXPECT_EQ("COMP[ AddTwoEF_2 , EdgeIdentity ] (EF:2)", EFC2->str());
   // Reset ID's for next test
   CurrAddTwoEfId = 0;
+  delete EF1;
+  delete EF2;
+  delete EFC1;
+  delete EFC2;
 }
 
 TEST(EdgeFunctionComposerTest, HandleEFComposition) {
   // ((3 + 2) * 2) + 2
   int InitialValue = 3;
-  auto AddEF1 = std::make_shared<AddTwoEF>(++CurrAddTwoEfId);
-  auto AddEF2 = std::make_shared<AddTwoEF>(++CurrAddTwoEfId);
-  auto MulEF = std::make_shared<MulTwoEF>(++CurrMulTwoEfId);
-  auto ComposedEF = (AddEF1->composeWith(MulEF))->composeWith(AddEF2);
+  auto AddEF1 = new AddTwoEF(++CurrAddTwoEfId);
+  auto AddEF2 = new AddTwoEF(++CurrAddTwoEfId);
+  auto MulEF = new MulTwoEF(++CurrMulTwoEfId);
+  auto ComposedEFIntermediate = AddEF1->composeWith(MulEF);
+  auto ComposedEF = ComposedEFIntermediate->composeWith(AddEF2);
   std::cout << "Compose: " << ComposedEF->str() << '\n';
   int Result = ComposedEF->computeTarget(InitialValue);
   std::cout << "Result: " << Result << '\n';
   EXPECT_EQ(12, Result);
   EXPECT_FALSE(AddEF1->equal_to(AddEF2));
+  delete AddEF1;
+  delete AddEF2;
+  delete MulEF;
+  delete ComposedEFIntermediate;
+  delete ComposedEF;
 }
 
 // main function for the test case

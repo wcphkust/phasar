@@ -47,7 +47,7 @@ IFDSTaintAnalysis::IFDSTaintAnalysis(
   IFDSTaintAnalysis::ZeroValue = createZeroValue();
 }
 
-shared_ptr<FlowFunction<IFDSTaintAnalysis::d_t>>
+FlowFunction<IFDSTaintAnalysis::d_t> *
 IFDSTaintAnalysis::getNormalFlowFunction(IFDSTaintAnalysis::n_t Curr,
                                          IFDSTaintAnalysis::n_t Succ) {
   // If a tainted value is stored, the store location must be tainted too
@@ -68,19 +68,19 @@ IFDSTaintAnalysis::getNormalFlowFunction(IFDSTaintAnalysis::n_t Curr,
         }
       }
     };
-    return make_shared<TAFF>(Store);
+    return new TAFF(Store);
   }
   // If a tainted value is loaded, the loaded value is of course tainted
-  if (const auto *Load = llvm::dyn_cast<llvm::LoadInst>(Curr)) {
-    return make_shared<GenIf<IFDSTaintAnalysis::d_t>>(
+  if (const auto Load = llvm::dyn_cast<llvm::LoadInst>(Curr)) {
+    return new GenIf<IFDSTaintAnalysis::d_t>(
         Load, [Load](IFDSTaintAnalysis::d_t Source) {
           return Source == Load->getPointerOperand();
         });
   }
   // Check if an address is computed from a tainted base pointer of an
   // aggregated object
-  if (const auto *GEP = llvm::dyn_cast<llvm::GetElementPtrInst>(Curr)) {
-    return make_shared<GenIf<IFDSTaintAnalysis::d_t>>(
+  if (const auto GEP = llvm::dyn_cast<llvm::GetElementPtrInst>(Curr)) {
+    return new GenIf<IFDSTaintAnalysis::d_t>(
         GEP, [GEP](IFDSTaintAnalysis::d_t Source) {
           return Source == GEP->getPointerOperand();
         });
@@ -89,7 +89,7 @@ IFDSTaintAnalysis::getNormalFlowFunction(IFDSTaintAnalysis::n_t Curr,
   return Identity<IFDSTaintAnalysis::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSTaintAnalysis::d_t>>
+FlowFunction<IFDSTaintAnalysis::d_t> *
 IFDSTaintAnalysis::getCallFlowFunction(IFDSTaintAnalysis::n_t CallStmt,
                                        IFDSTaintAnalysis::f_t DestFun) {
   string FunctionName = cxxDemangle(DestFun->getName().str());
@@ -104,14 +104,14 @@ IFDSTaintAnalysis::getCallFlowFunction(IFDSTaintAnalysis::n_t CallStmt,
   // Map the actual into the formal parameters
   if (llvm::isa<llvm::CallInst>(CallStmt) ||
       llvm::isa<llvm::InvokeInst>(CallStmt)) {
-    return make_shared<MapFactsToCallee>(llvm::ImmutableCallSite(CallStmt),
+    return new MapFactsToCallee(llvm::ImmutableCallSite(CallStmt),
                                          DestFun);
   }
   // Pass everything else as identity
   return Identity<IFDSTaintAnalysis::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSTaintAnalysis::d_t>>
+FlowFunction<IFDSTaintAnalysis::d_t> *
 IFDSTaintAnalysis::getRetFlowFunction(IFDSTaintAnalysis::n_t CallSite,
                                       IFDSTaintAnalysis::f_t CalleeFun,
                                       IFDSTaintAnalysis::n_t ExitStmt,
@@ -119,7 +119,7 @@ IFDSTaintAnalysis::getRetFlowFunction(IFDSTaintAnalysis::n_t CallSite,
   // We must check if the return value and formal parameter are tainted, if so
   // we must taint all user's of the function call. We are only interested in
   // formal parameters of pointer/reference type.
-  return make_shared<MapFactsToCaller>(
+  return new MapFactsToCaller(
       llvm::ImmutableCallSite(CallSite), CalleeFun, ExitStmt,
       [](IFDSTaintAnalysis::d_t Formal) {
         return Formal->getType()->isPointerTy();
@@ -127,7 +127,7 @@ IFDSTaintAnalysis::getRetFlowFunction(IFDSTaintAnalysis::n_t CallSite,
   // All other stuff is killed at this point
 }
 
-shared_ptr<FlowFunction<IFDSTaintAnalysis::d_t>>
+FlowFunction<IFDSTaintAnalysis::d_t> *
 IFDSTaintAnalysis::getCallToRetFlowFunction(
     IFDSTaintAnalysis::n_t CallSite, IFDSTaintAnalysis::n_t RetSite,
     set<IFDSTaintAnalysis::f_t> Callees) {
@@ -179,8 +179,7 @@ IFDSTaintAnalysis::getCallToRetFlowFunction(
       if (Source.TaintsReturn) {
         ToGenerate.insert(CallSite);
       }
-      return make_shared<GenAll<IFDSTaintAnalysis::d_t>>(ToGenerate,
-                                                         getZeroValue());
+      return new GenAll<IFDSTaintAnalysis::d_t>(ToGenerate, getZeroValue());
     }
     if (SourceSinkFunctions.isSink(FunctionName)) {
       // process leaks
@@ -213,7 +212,7 @@ IFDSTaintAnalysis::getCallToRetFlowFunction(
           return {Source};
         }
       };
-      return make_shared<TAFF>(llvm::ImmutableCallSite(CallSite), Callee,
+      return new TAFF(llvm::ImmutableCallSite(CallSite), Callee,
                                SourceSinkFunctions.getSink(FunctionName), Leaks,
                                this);
     }
@@ -222,7 +221,7 @@ IFDSTaintAnalysis::getCallToRetFlowFunction(
   return Identity<IFDSTaintAnalysis::d_t>::getInstance();
 }
 
-shared_ptr<FlowFunction<IFDSTaintAnalysis::d_t>>
+FlowFunction<IFDSTaintAnalysis::d_t> *
 IFDSTaintAnalysis::getSummaryFlowFunction(IFDSTaintAnalysis::n_t CallStmt,
                                           IFDSTaintAnalysis::f_t DestFun) {
   SpecialSummaries<IFDSTaintAnalysis::d_t> &SS =
