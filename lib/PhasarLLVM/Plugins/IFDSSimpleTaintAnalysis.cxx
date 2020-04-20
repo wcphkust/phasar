@@ -89,11 +89,9 @@ IFDSSimpleTaintAnalysis::getCallFlowFunction(const llvm::Instruction *CallStmt,
   return Identity<const llvm::Value *>::getInstance();
 }
 
-FlowFunction<const llvm::Value *> *
-IFDSSimpleTaintAnalysis::getRetFlowFunction(const llvm::Instruction *CallSite,
-                                            const llvm::Function *CalleeFun,
-                                            const llvm::Instruction *ExitStmt,
-                                            const llvm::Instruction *RetSite) {
+FlowFunction<const llvm::Value *> *IFDSSimpleTaintAnalysis::getRetFlowFunction(
+    const llvm::Instruction *CallSite, const llvm::Function *CalleeFun,
+    const llvm::Instruction *ExitStmt, const llvm::Instruction *RetSite) {
   return Identity<const llvm::Value *>::getInstance();
 }
 

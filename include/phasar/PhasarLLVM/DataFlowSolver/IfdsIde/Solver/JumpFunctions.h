@@ -109,8 +109,8 @@ public:
    * source values, and for each the associated edge function.
    * The return value is a mapping from source value to function.
    */
-  std::optional<std::reference_wrapper<
-      std::unordered_map<D, EdgeFunction<L> *>>>
+  std::optional<
+      std::reference_wrapper<std::unordered_map<D, EdgeFunction<L> *>>>
   reverseLookup(N target, D targetVal) {
     if (!nonEmptyReverseLookup.contains(target, targetVal)) {
       return std::nullopt;
@@ -124,8 +124,8 @@ public:
    * associated target values, and for each the associated edge function.
    * The return value is a mapping from target value to function.
    */
-  std::optional<std::reference_wrapper<
-      std::unordered_map<D, EdgeFunction<L> *>>>
+  std::optional<
+      std::reference_wrapper<std::unordered_map<D, EdgeFunction<L> *>>>
   forwardLookup(D sourceVal, N target) {
     if (!nonEmptyForwardLookup.contains(sourceVal, target)) {
       return std::nullopt;

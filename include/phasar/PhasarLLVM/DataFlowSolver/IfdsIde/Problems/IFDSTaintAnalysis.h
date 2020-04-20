@@ -78,20 +78,15 @@ public:
 
   FlowFunction<d_t> *getNormalFlowFunction(n_t curr, n_t succ) override;
 
-  FlowFunction<d_t> * getCallFlowFunction(n_t callStmt,
-                                                         f_t destFun) override;
+  FlowFunction<d_t> *getCallFlowFunction(n_t callStmt, f_t destFun) override;
 
-  FlowFunction<d_t> * getRetFlowFunction(n_t callSite,
-                                                        f_t calleeFun,
-                                                        n_t exitStmt,
-                                                        n_t retSite) override;
+  FlowFunction<d_t> *getRetFlowFunction(n_t callSite, f_t calleeFun,
+                                        n_t exitStmt, n_t retSite) override;
 
-  FlowFunction<d_t> *
-  getCallToRetFlowFunction(n_t callSite, n_t retSite,
-                           std::set<f_t> callees) override;
+  FlowFunction<d_t> *getCallToRetFlowFunction(n_t callSite, n_t retSite,
+                                              std::set<f_t> callees) override;
 
-  FlowFunction<d_t> *
-  getSummaryFlowFunction(n_t callStmt, f_t destFun) override;
+  FlowFunction<d_t> *getSummaryFlowFunction(n_t callStmt, f_t destFun) override;
 
   std::map<n_t, std::set<d_t>> initialSeeds() override;
 

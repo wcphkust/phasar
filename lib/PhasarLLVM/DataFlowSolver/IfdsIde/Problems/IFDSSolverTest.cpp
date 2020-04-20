@@ -49,11 +49,9 @@ IFDSSolverTest::getCallFlowFunction(IFDSSolverTest::n_t CallStmt,
   return Identity<IFDSSolverTest::d_t>::getInstance();
 }
 
-FlowFunction<IFDSSolverTest::d_t> *
-IFDSSolverTest::getRetFlowFunction(IFDSSolverTest::n_t CallSite,
-                                   IFDSSolverTest::f_t CalleeFun,
-                                   IFDSSolverTest::n_t ExitStmt,
-                                   IFDSSolverTest::n_t RetSite) {
+FlowFunction<IFDSSolverTest::d_t> *IFDSSolverTest::getRetFlowFunction(
+    IFDSSolverTest::n_t CallSite, IFDSSolverTest::f_t CalleeFun,
+    IFDSSolverTest::n_t ExitStmt, IFDSSolverTest::n_t RetSite) {
   return Identity<IFDSSolverTest::d_t>::getInstance();
 }
 

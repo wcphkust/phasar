@@ -48,11 +48,9 @@ WPDSAliasCollector::getCallFlowFunction(WPDSAliasCollector::n_t CallStmt,
   return Identity<WPDSAliasCollector::d_t>::getInstance();
 }
 
-FlowFunction<WPDSAliasCollector::d_t> *
-WPDSAliasCollector::getRetFlowFunction(WPDSAliasCollector::n_t CallSite,
-                                       WPDSAliasCollector::f_t CalleeFun,
-                                       WPDSAliasCollector::n_t ExitStmt,
-                                       WPDSAliasCollector::n_t RetSite) {
+FlowFunction<WPDSAliasCollector::d_t> *WPDSAliasCollector::getRetFlowFunction(
+    WPDSAliasCollector::n_t CallSite, WPDSAliasCollector::f_t CalleeFun,
+    WPDSAliasCollector::n_t ExitStmt, WPDSAliasCollector::n_t RetSite) {
   return Identity<WPDSAliasCollector::d_t>::getInstance();
 }
 
@@ -77,8 +75,7 @@ WPDSAliasCollector::getNormalEdgeFunction(WPDSAliasCollector::n_t Curr,
   return EdgeIdentity<WPDSAliasCollector::l_t>::getInstance();
 }
 
-EdgeFunction<WPDSAliasCollector::l_t> *
-WPDSAliasCollector::getCallEdgeFunction(
+EdgeFunction<WPDSAliasCollector::l_t> *WPDSAliasCollector::getCallEdgeFunction(
     WPDSAliasCollector::n_t CallStmt, WPDSAliasCollector::d_t SrcNode,
     WPDSAliasCollector::f_t DestinationFunction,
     WPDSAliasCollector::d_t DestNode) {

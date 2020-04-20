@@ -26,19 +26,19 @@ namespace psr {
 template <typename N, typename D, typename F, typename L> class EdgeFunctions {
 public:
   virtual ~EdgeFunctions() = default;
-  virtual EdgeFunction<L> *
-  getNormalEdgeFunction(N curr, D currNode, N succ, D succNode) = 0;
-  virtual EdgeFunction<L> *
-  getCallEdgeFunction(N callStmt, D srcNode, F destinationFunction,
-                      D destNode) = 0;
-  virtual EdgeFunction<L> *
-  getReturnEdgeFunction(N callSite, F calleeFunction, N exitStmt, D exitNode,
-                        N reSite, D retNode) = 0;
-  virtual EdgeFunction<L> *
-  getCallToRetEdgeFunction(N callSite, D callNode, N retSite, D retSiteNode,
-                           std::set<F> callees) = 0;
-  virtual EdgeFunction<L> *
-  getSummaryEdgeFunction(N curr, D currNode, N succ, D succNode) = 0;
+  virtual EdgeFunction<L> *getNormalEdgeFunction(N curr, D currNode, N succ,
+                                                 D succNode) = 0;
+  virtual EdgeFunction<L> *getCallEdgeFunction(N callStmt, D srcNode,
+                                               F destinationFunction,
+                                               D destNode) = 0;
+  virtual EdgeFunction<L> *getReturnEdgeFunction(N callSite, F calleeFunction,
+                                                 N exitStmt, D exitNode,
+                                                 N reSite, D retNode) = 0;
+  virtual EdgeFunction<L> *getCallToRetEdgeFunction(N callSite, D callNode,
+                                                    N retSite, D retSiteNode,
+                                                    std::set<F> callees) = 0;
+  virtual EdgeFunction<L> *getSummaryEdgeFunction(N curr, D currNode, N succ,
+                                                  D succNode) = 0;
 };
 
 } // namespace psr

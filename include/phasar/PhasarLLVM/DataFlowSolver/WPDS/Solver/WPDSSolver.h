@@ -507,8 +507,7 @@ public:
                   << "Process exit at target: "
                   << this->ideTabulationProblem.NtoString(edge.getTarget()));
     N n = edge.getTarget(); // an exit node; line 21...
-    EdgeFunction<L> *f =
-        IDESolver<N, D, F, T, V, L, I>::jumpFunction(edge);
+    EdgeFunction<L> *f = IDESolver<N, D, F, T, V, L, I>::jumpFunction(edge);
     F functionThatNeedsSummary =
         IDESolver<N, D, F, T, V, L, I>::ICF->getFunctionOf(n);
     D d1 = edge.factAtSource();

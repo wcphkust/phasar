@@ -54,20 +54,15 @@ public:
 
   FlowFunction<d_t> *getNormalFlowFunction(n_t curr, n_t succ) override;
 
-  FlowFunction<d_t> * getCallFlowFunction(n_t callStmt,
-                                                         f_t destFun) override;
+  FlowFunction<d_t> *getCallFlowFunction(n_t callStmt, f_t destFun) override;
 
-  FlowFunction<d_t> * getRetFlowFunction(n_t callSite,
-                                                        f_t calleeFun,
-                                                        n_t exitStmt,
-                                                        n_t retSite) override;
+  FlowFunction<d_t> *getRetFlowFunction(n_t callSite, f_t calleeFun,
+                                        n_t exitStmt, n_t retSite) override;
 
-  FlowFunction<d_t> *
-  getCallToRetFlowFunction(n_t callSite, n_t retSite,
-                           std::set<f_t> callees) override;
+  FlowFunction<d_t> *getCallToRetFlowFunction(n_t callSite, n_t retSite,
+                                              std::set<f_t> callees) override;
 
-  FlowFunction<d_t> *
-  getSummaryFlowFunction(n_t callStmt, f_t destFun) override;
+  FlowFunction<d_t> *getSummaryFlowFunction(n_t callStmt, f_t destFun) override;
 
   std::map<n_t, std::set<d_t>> initialSeeds() override;
 
@@ -80,17 +75,17 @@ public:
   EdgeFunction<l_t> *getNormalEdgeFunction(n_t curr, d_t currNode, n_t succ,
                                            d_t succNode) override;
 
-  EdgeFunction<l_t> *
-  getCallEdgeFunction(n_t callStmt, d_t srcNode, f_t destinationFunction,
-                      d_t destNode) override;
+  EdgeFunction<l_t> *getCallEdgeFunction(n_t callStmt, d_t srcNode,
+                                         f_t destinationFunction,
+                                         d_t destNode) override;
 
-  EdgeFunction<l_t> *
-  getReturnEdgeFunction(n_t callSite, f_t calleeFunction, n_t exitStmt,
-                        d_t exitNode, n_t reSite, d_t retNode) override;
+  EdgeFunction<l_t> *getReturnEdgeFunction(n_t callSite, f_t calleeFunction,
+                                           n_t exitStmt, d_t exitNode,
+                                           n_t reSite, d_t retNode) override;
 
-  EdgeFunction<l_t> *
-  getCallToRetEdgeFunction(n_t callSite, d_t callNode, n_t retSite,
-                           d_t retSiteNode, std::set<f_t> callees) override;
+  EdgeFunction<l_t> *getCallToRetEdgeFunction(n_t callSite, d_t callNode,
+                                              n_t retSite, d_t retSiteNode,
+                                              std::set<f_t> callees) override;
 
   EdgeFunction<l_t> *getSummaryEdgeFunction(n_t callSite, d_t callNode,
                                             n_t retSite,

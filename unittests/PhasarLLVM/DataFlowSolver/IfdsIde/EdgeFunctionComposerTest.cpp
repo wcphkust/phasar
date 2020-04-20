@@ -60,19 +60,19 @@ public:
   ~AddTwoEF() override = default;
 
   int computeTarget(int Source) override { return Source + 2; };
- 
+
   EdgeFunction<int> *composeWith(EdgeFunction<int> *SecondFunction) override {
     return new MyEFC(this, SecondFunction);
   }
- 
+
   EdgeFunction<int> *joinWith(EdgeFunction<int> *OtherFunction) override {
     return new AllBottom<int>(-1);
   };
- 
+
   bool equal_to(EdgeFunction<int> *Other) const override {
     return this == Other;
   }
- 
+
   void print(std::ostream &Os, bool IsForDebug = false) const override {
     Os << "AddTwoEF_" << AddTwoEfId;
   }

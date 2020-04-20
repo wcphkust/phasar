@@ -439,8 +439,10 @@ protected:
                 BOOST_LOG_SEV(lg::get(), DEBUG)
                 << "Compose: " << sumEdgFnE->str() << " * " << f->str();
                 BOOST_LOG_SEV(lg::get(), DEBUG) << ' ');
-            propagate(d1, returnSiteN, d3, cachedFlowEdgeFunctions.manageEdgeFunction(
-                          f->composeWith(sumEdgFnE)), n, false);
+            propagate(d1, returnSiteN, d3,
+                      cachedFlowEdgeFunctions.manageEdgeFunction(
+                          f->composeWith(sumEdgFnE)),
+                      n, false);
           }
         }
       } else {
@@ -465,8 +467,7 @@ protected:
           saveEdges(n, sP, d2, res, true);
           // for each result node of the call-flow function
           for (D d3 : res) {
-            using TableCell =
-                typename Table<N, D, EdgeFunction<L> *>::Cell;
+            using TableCell = typename Table<N, D, EdgeFunction<L> *>::Cell;
             // create initial self-loop
             LOG_IF_ENABLE(BOOST_LOG_SEV(lg::get(), DEBUG)
                           << "Create initial self-loop with D: "
@@ -730,7 +731,7 @@ protected:
     }
   }
 
-  EdgeFunction<L> * jumpFunction(const PathEdge<N, D> edge) {
+  EdgeFunction<L> *jumpFunction(const PathEdge<N, D> edge) {
     LOG_IF_ENABLE(
         BOOST_LOG_SEV(lg::get(), DEBUG) << " ";
         BOOST_LOG_SEV(lg::get(), DEBUG) << "JumpFunctions Forward-Lookup:";
@@ -815,8 +816,7 @@ protected:
     PAMM_GET_INSTANCE;
     for (N n : values) {
       for (N sP : ICF->getStartPointsOf(ICF->getFunctionOf(n))) {
-        using TableCell =
-            typename Table<D, D, EdgeFunction<L> *>::Cell;
+        using TableCell = typename Table<D, D, EdgeFunction<L> *>::Cell;
         Table<D, D, EdgeFunction<L> *> lookupByTarget;
         lookupByTarget = jumpFn->lookupByTarget(n);
         for (const TableCell &sourceValTargetValAndFunction :
@@ -1002,8 +1002,9 @@ protected:
                                     << f3->str();
                                 BOOST_LOG_SEV(lg::get(), DEBUG) << ' ');
                   propagate(d3, retSiteC, d5_restoredCtx,
-                          cachedFlowEdgeFunctions.manageEdgeFunction(
-                              f3->composeWith(fPrime)), c, false);
+                            cachedFlowEdgeFunctions.manageEdgeFunction(
+                                f3->composeWith(fPrime)),
+                            c, false);
                 }
               }
             }
@@ -1032,9 +1033,8 @@ protected:
                            PAMM_SEVERITY_LEVEL::Full);
           saveEdges(n, retSiteC, d2, targets, true);
           for (D d5 : targets) {
-            EdgeFunction<L> *f5 =
-                cachedFlowEdgeFunctions.getReturnEdgeFunction(
-                    c, ICF->getFunctionOf(n), n, d2, retSiteC, d5);
+            EdgeFunction<L> *f5 = cachedFlowEdgeFunctions.getReturnEdgeFunction(
+                c, ICF->getFunctionOf(n), n, d2, retSiteC, d5);
             LOG_IF_ENABLE(BOOST_LOG_SEV(lg::get(), DEBUG)
                           << "Queried Return Edge Function: " << f5->str());
             if (SolverConfig.emitESG) {
@@ -1068,10 +1068,9 @@ protected:
     }
   }
 
-  void
-  propagteUnbalancedReturnFlow(N retSiteC, D targetVal,
-                               EdgeFunction<L> * edgeFunction,
-                               N relatedCallSite) {
+  void propagteUnbalancedReturnFlow(N retSiteC, D targetVal,
+                                    EdgeFunction<L> *edgeFunction,
+                                    N relatedCallSite) {
     propagate(ZeroValue, retSiteC, targetVal, std::move(edgeFunction),
               relatedCallSite, true);
   }
@@ -1109,16 +1108,17 @@ protected:
    * @param d2 The abstraction at the current node
    * @return The set of abstractions at the successor node
    */
-  std::set<D> computeNormalFlowFunction(const FlowFunction<D> *flowFunction, D d1,
-                                        D d2) {
+  std::set<D> computeNormalFlowFunction(const FlowFunction<D> *flowFunction,
+                                        D d1, D d2) {
     return flowFunction->computeTargets(d2);
   }
 
   /**
    * TODO: comment
    */
-  std::set<D> computeSummaryFlowFunction(const FlowFunction<D> *SummaryFlowFunction,
-                                         D d1, D d2) {
+  std::set<D>
+  computeSummaryFlowFunction(const FlowFunction<D> *SummaryFlowFunction, D d1,
+                             D d2) {
     return SummaryFlowFunction->computeTargets(d2);
   }
 
@@ -1129,8 +1129,8 @@ protected:
    * @param d2 The abstraction at the call site
    * @return The set of caller-side abstractions at the callee's start node
    */
-  std::set<D> computeCallFlowFunction(const FlowFunction<D> *callFlowFunction, D d1,
-                                      D d2) {
+  std::set<D> computeCallFlowFunction(const FlowFunction<D> *callFlowFunction,
+                                      D d1, D d2) {
     return callFlowFunction->computeTargets(d2);
   }
 
@@ -1143,9 +1143,8 @@ protected:
    * @param d2 The abstraction at the call site
    * @return The set of caller-side abstractions at the return site
    */
-  std::set<D>
-  computeCallToReturnFlowFunction(const FlowFunction<D> *callToReturnFlowFunction,
-                                  D d1, D d2) {
+  std::set<D> computeCallToReturnFlowFunction(
+      const FlowFunction<D> *callToReturnFlowFunction, D d1, D d2) {
     return callToReturnFlowFunction->computeTargets(d2);
   }
 
@@ -1159,8 +1158,8 @@ protected:
    * @param callerSideDs The abstractions at the call site
    * @return The set of caller-side abstractions at the return site
    */
-  std::set<D> computeReturnFlowFunction(const FlowFunction<D> *retFunction, D d1,
-                                        D d2, N callSite,
+  std::set<D> computeReturnFlowFunction(const FlowFunction<D> *retFunction,
+                                        D d1, D d2, N callSite,
                                         const std::set<D> &callerSideDs) {
     return retFunction->computeTargets(d2);
   }
@@ -1183,8 +1182,7 @@ protected:
    * but may be useful for subclasses of {@link IDESolver})
    */
   void
-  propagate(D sourceVal, N target, D targetVal,
-            const EdgeFunction<L> *f,
+  propagate(D sourceVal, N target, D targetVal, const EdgeFunction<L> *f,
             /* deliberately exposed to clients */ N relatedCallSite,
             /* deliberately exposed to clients */ bool isUnbalancedReturn) {
     LOG_IF_ENABLE(BOOST_LOG_SEV(lg::get(), DEBUG) << "Propagate flow";
@@ -1207,7 +1205,8 @@ protected:
     if (jumpFnE == nullptr) {
       jumpFnE = allTop; // jump function is initialized to all-top
     }
-    fPrime = cachedFlowEdgeFunctions.manageEdgeFunction(jumpFnE->joinWith(f)); // TODO: check before join?
+    fPrime = cachedFlowEdgeFunctions.manageEdgeFunction(
+        jumpFnE->joinWith(f)); // TODO: check before join?
     bool newFunction = !(fPrime->equal_to(jumpFnE));
     LOG_IF_ENABLE(BOOST_LOG_SEV(lg::get(), DEBUG)
                       << "Join: " << jumpFnE->str() << " & " << f->str()
@@ -1244,8 +1243,8 @@ protected:
     return IDEProblem.join(std::move(curr), std::move(newVal));
   }
 
-  std::set<typename Table<N, D, EdgeFunction<L> *>::Cell>
-  endSummary(N sP, D d3) {
+  std::set<typename Table<N, D, EdgeFunction<L> *>::Cell> endSummary(N sP,
+                                                                     D d3) {
     if constexpr (PAMM_CURR_SEV_LEVEL >= PAMM_SEVERITY_LEVEL::Core) {
       auto key = std::make_pair(sP, d3);
       auto findND = fSummaryReuse.find(key);
@@ -1826,10 +1825,11 @@ public:
 };
 
 template <typename Problem>
-IDESolver(Problem &) -> IDESolver<typename Problem::n_t, typename Problem::d_t,
-                                  typename Problem::f_t, typename Problem::t_t,
-                                  typename Problem::v_t, typename Problem::l_t,
-                                  typename Problem::i_t>;
+IDESolver(Problem &)
+    ->IDESolver<typename Problem::n_t, typename Problem::d_t,
+                typename Problem::f_t, typename Problem::t_t,
+                typename Problem::v_t, typename Problem::l_t,
+                typename Problem::i_t>;
 
 template <typename Problem>
 using IDESolver_P = IDESolver<typename Problem::n_t, typename Problem::d_t,

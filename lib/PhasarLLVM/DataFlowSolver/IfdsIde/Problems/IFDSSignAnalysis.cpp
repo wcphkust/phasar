@@ -48,11 +48,9 @@ IFDSSignAnalysis::getCallFlowFunction(IFDSSignAnalysis::n_t CallStmt,
   return Identity<IFDSSignAnalysis::d_t>::getInstance();
 }
 
-FlowFunction<IFDSSignAnalysis::d_t> *
-IFDSSignAnalysis::getRetFlowFunction(IFDSSignAnalysis::n_t CallSite,
-                                     IFDSSignAnalysis::f_t CalleeFun,
-                                     IFDSSignAnalysis::n_t ExitStmt,
-                                     IFDSSignAnalysis::n_t RetSite) {
+FlowFunction<IFDSSignAnalysis::d_t> *IFDSSignAnalysis::getRetFlowFunction(
+    IFDSSignAnalysis::n_t CallSite, IFDSSignAnalysis::f_t CalleeFun,
+    IFDSSignAnalysis::n_t ExitStmt, IFDSSignAnalysis::n_t RetSite) {
   return Identity<IFDSSignAnalysis::d_t>::getInstance();
 }
 

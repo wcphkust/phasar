@@ -42,7 +42,7 @@ IFDSProtoAnalysis::getNormalFlowFunction(IFDSProtoAnalysis::n_t Curr,
                                          IFDSProtoAnalysis::n_t Succ) {
   if (const auto Store = llvm::dyn_cast<llvm::StoreInst>(Curr)) {
     return new Gen<IFDSProtoAnalysis::d_t>(Store->getPointerOperand(),
-                                                    getZeroValue());
+                                           getZeroValue());
   }
   return Identity<IFDSProtoAnalysis::d_t>::getInstance();
 }
@@ -53,11 +53,9 @@ IFDSProtoAnalysis::getCallFlowFunction(IFDSProtoAnalysis::n_t CallStmt,
   return Identity<IFDSProtoAnalysis::d_t>::getInstance();
 }
 
-FlowFunction<IFDSProtoAnalysis::d_t> *
-IFDSProtoAnalysis::getRetFlowFunction(IFDSProtoAnalysis::n_t CallSite,
-                                      IFDSProtoAnalysis::f_t CalleeFun,
-                                      IFDSProtoAnalysis::n_t ExitStmt,
-                                      IFDSProtoAnalysis::n_t RetSite) {
+FlowFunction<IFDSProtoAnalysis::d_t> *IFDSProtoAnalysis::getRetFlowFunction(
+    IFDSProtoAnalysis::n_t CallSite, IFDSProtoAnalysis::f_t CalleeFun,
+    IFDSProtoAnalysis::n_t ExitStmt, IFDSProtoAnalysis::n_t RetSite) {
   return Identity<IFDSProtoAnalysis::d_t>::getInstance();
 }
 

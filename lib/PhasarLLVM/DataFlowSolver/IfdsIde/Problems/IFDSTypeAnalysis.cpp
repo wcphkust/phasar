@@ -57,11 +57,9 @@ IFDSTypeAnalysis::getCallFlowFunction(IFDSTypeAnalysis::n_t CallStmt,
   return new TAFF();
 }
 
-FlowFunction<IFDSTypeAnalysis::d_t> *
-IFDSTypeAnalysis::getRetFlowFunction(IFDSTypeAnalysis::n_t CallSite,
-                                     IFDSTypeAnalysis::f_t CalleeFun,
-                                     IFDSTypeAnalysis::n_t ExitStmt,
-                                     IFDSTypeAnalysis::n_t RetSite) {
+FlowFunction<IFDSTypeAnalysis::d_t> *IFDSTypeAnalysis::getRetFlowFunction(
+    IFDSTypeAnalysis::n_t CallSite, IFDSTypeAnalysis::f_t CalleeFun,
+    IFDSTypeAnalysis::n_t ExitStmt, IFDSTypeAnalysis::n_t RetSite) {
   struct TAFF : FlowFunction<IFDSTypeAnalysis::d_t> {
     set<IFDSTypeAnalysis::d_t>
     computeTargets(IFDSTypeAnalysis::d_t Source) override {

@@ -104,26 +104,22 @@ IFDSTaintAnalysis::getCallFlowFunction(IFDSTaintAnalysis::n_t CallStmt,
   // Map the actual into the formal parameters
   if (llvm::isa<llvm::CallInst>(CallStmt) ||
       llvm::isa<llvm::InvokeInst>(CallStmt)) {
-    return new MapFactsToCallee(llvm::ImmutableCallSite(CallStmt),
-                                         DestFun);
+    return new MapFactsToCallee(llvm::ImmutableCallSite(CallStmt), DestFun);
   }
   // Pass everything else as identity
   return Identity<IFDSTaintAnalysis::d_t>::getInstance();
 }
 
-FlowFunction<IFDSTaintAnalysis::d_t> *
-IFDSTaintAnalysis::getRetFlowFunction(IFDSTaintAnalysis::n_t CallSite,
-                                      IFDSTaintAnalysis::f_t CalleeFun,
-                                      IFDSTaintAnalysis::n_t ExitStmt,
-                                      IFDSTaintAnalysis::n_t RetSite) {
+FlowFunction<IFDSTaintAnalysis::d_t> *IFDSTaintAnalysis::getRetFlowFunction(
+    IFDSTaintAnalysis::n_t CallSite, IFDSTaintAnalysis::f_t CalleeFun,
+    IFDSTaintAnalysis::n_t ExitStmt, IFDSTaintAnalysis::n_t RetSite) {
   // We must check if the return value and formal parameter are tainted, if so
   // we must taint all user's of the function call. We are only interested in
   // formal parameters of pointer/reference type.
-  return new MapFactsToCaller(
-      llvm::ImmutableCallSite(CallSite), CalleeFun, ExitStmt,
-      [](IFDSTaintAnalysis::d_t Formal) {
-        return Formal->getType()->isPointerTy();
-      });
+  return new MapFactsToCaller(llvm::ImmutableCallSite(CallSite), CalleeFun,
+                              ExitStmt, [](IFDSTaintAnalysis::d_t Formal) {
+                                return Formal->getType()->isPointerTy();
+                              });
   // All other stuff is killed at this point
 }
 
@@ -213,8 +209,7 @@ IFDSTaintAnalysis::getCallToRetFlowFunction(
         }
       };
       return new TAFF(llvm::ImmutableCallSite(CallSite), Callee,
-                               SourceSinkFunctions.getSink(FunctionName), Leaks,
-                               this);
+                      SourceSinkFunctions.getSink(FunctionName), Leaks, this);
     }
   }
   // Otherwise pass everything as it is
