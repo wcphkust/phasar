@@ -32,23 +32,23 @@ IDESecureHeapPropagation::IDESecureHeapPropagation(
   ZeroValue = createZeroValue();
 }
 
-std::shared_ptr<FlowFunction<IDESecureHeapPropagation::d_t>>
+FlowFunction<IDESecureHeapPropagation::d_t> *
 IDESecureHeapPropagation::getNormalFlowFunction(n_t Curr, n_t Succ) {
   return Identity<d_t>::getInstance();
 }
 
-std::shared_ptr<FlowFunction<IDESecureHeapPropagation::d_t>>
+FlowFunction<IDESecureHeapPropagation::d_t> *
 IDESecureHeapPropagation::getCallFlowFunction(n_t CallStmt, f_t DestMthd) {
   return Identity<d_t>::getInstance();
 }
 
-std::shared_ptr<FlowFunction<IDESecureHeapPropagation::d_t>>
+FlowFunction<IDESecureHeapPropagation::d_t> *
 IDESecureHeapPropagation::getRetFlowFunction(n_t CallSite, f_t CalleeMthd,
                                              n_t ExitStmt, n_t RetSite) {
   return Identity<d_t>::getInstance();
 }
 
-std::shared_ptr<FlowFunction<IDESecureHeapPropagation::d_t>>
+FlowFunction<IDESecureHeapPropagation::d_t> *
 IDESecureHeapPropagation::getCallToRetFlowFunction(n_t CallSite, n_t RetSite,
                                                    std::set<f_t> Callees) {
 
@@ -56,12 +56,11 @@ IDESecureHeapPropagation::getCallToRetFlowFunction(n_t CallSite, n_t RetSite,
 
   auto FName = CS.getCalledFunction()->getName();
   if (FName == initializerFn) {
-    return std::make_shared<Gen<d_t>>(SecureHeapFact::INITIALIZED,
-                                      getZeroValue());
+    return new Gen<d_t>(SecureHeapFact::INITIALIZED, getZeroValue());
   }
   return Identity<d_t>::getInstance();
 }
-std::shared_ptr<FlowFunction<IDESecureHeapPropagation::d_t>>
+FlowFunction<IDESecureHeapPropagation::d_t> *
 IDESecureHeapPropagation::getSummaryFlowFunction(n_t CallStmt, f_t DestMthd) {
   return nullptr;
 }
@@ -112,26 +111,26 @@ void IDESecureHeapPropagation::printFunction(std::ostream &Os, f_t F) const {
 
 // in addition provide specifications for the IDE parts
 
-std::shared_ptr<EdgeFunction<IDESecureHeapPropagation::l_t>>
+EdgeFunction<IDESecureHeapPropagation::l_t> *
 IDESecureHeapPropagation::getNormalEdgeFunction(n_t Curr, d_t CurrNode,
                                                 n_t Succ, d_t SuccNode) {
   return IdentityEdgeFunction::getInstance();
 }
-std::shared_ptr<EdgeFunction<IDESecureHeapPropagation::l_t>>
+EdgeFunction<IDESecureHeapPropagation::l_t> *
 IDESecureHeapPropagation::getCallEdgeFunction(n_t CallStmt, d_t SrcNode,
                                               f_t DestinationMethod,
                                               d_t DestNode) {
   return IdentityEdgeFunction::getInstance();
 }
 
-std::shared_ptr<EdgeFunction<IDESecureHeapPropagation::l_t>>
+EdgeFunction<IDESecureHeapPropagation::l_t> *
 IDESecureHeapPropagation::getReturnEdgeFunction(n_t CallSite, f_t CalleeMethod,
                                                 n_t ExitStmt, d_t ExitNode,
                                                 n_t ReSite, d_t RetNode) {
   return IdentityEdgeFunction::getInstance();
 }
 
-std::shared_ptr<EdgeFunction<IDESecureHeapPropagation::l_t>>
+EdgeFunction<IDESecureHeapPropagation::l_t> *
 IDESecureHeapPropagation::getCallToRetEdgeFunction(n_t CallSite, d_t CallNode,
                                                    n_t RetSite, d_t RetSiteNode,
                                                    std::set<f_t> Callees) {
@@ -150,7 +149,7 @@ IDESecureHeapPropagation::getCallToRetEdgeFunction(n_t CallSite, d_t CallNode,
   return IdentityEdgeFunction::getInstance();
 }
 
-std::shared_ptr<EdgeFunction<IDESecureHeapPropagation::l_t>>
+EdgeFunction<IDESecureHeapPropagation::l_t> *
 IDESecureHeapPropagation::getSummaryEdgeFunction(n_t CallStmt, d_t CallNode,
                                                  n_t RetSite, d_t RetSiteNode) {
   return nullptr;
@@ -177,9 +176,9 @@ IDESecureHeapPropagation::l_t IDESecureHeapPropagation::join(l_t Lhs, l_t Rhs) {
   return l_t::BOT;
 }
 
-std::shared_ptr<EdgeFunction<IDESecureHeapPropagation::l_t>>
+EdgeFunction<IDESecureHeapPropagation::l_t> *
 IDESecureHeapPropagation::allTopFunction() {
-  static auto AT = std::make_shared<AllTop<l_t>>(l_t::TOP);
+  static auto AT = new AllTop<l_t>(l_t::TOP);
   return AT;
 }
 
@@ -230,36 +229,36 @@ IDESecureHeapPropagation::IdentityEdgeFunction::computeTarget(l_t Source) {
 }
 
 bool IDESecureHeapPropagation::IdentityEdgeFunction::equal_to(
-    std::shared_ptr<EdgeFunction<l_t>> Other) const {
-  return Other.get() == this; // singelton
+    EdgeFunction<l_t> *Other) const {
+  return Other == this; // singelton
 }
 
 void IDESecureHeapPropagation::IdentityEdgeFunction::print(
     std::ostream &OS, bool IsForDebug) const {
   OS << "IdentityEdgeFn";
 }
-std::shared_ptr<EdgeFunction<IDESecureHeapPropagation::l_t>>
+EdgeFunction<IDESecureHeapPropagation::l_t> *
 IDESecureHeapPropagation::IdentityEdgeFunction::composeWith(
-    std::shared_ptr<EdgeFunction<l_t>> SecondFunction) {
-  if (dynamic_cast<AllBottom<l_t> *>(SecondFunction.get())) {
-    return shared_from_this();
+    EdgeFunction<l_t> *SecondFunction) {
+  if (dynamic_cast<AllBottom<l_t> *>(SecondFunction)) {
+    return this;
   }
   return SecondFunction;
 }
-std::shared_ptr<IDESecureHeapPropagation::IdentityEdgeFunction>
+IDESecureHeapPropagation::IdentityEdgeFunction *
 IDESecureHeapPropagation::IdentityEdgeFunction::getInstance() {
-  static auto Cache = std::make_shared<IdentityEdgeFunction>();
+  static auto Cache = new IdentityEdgeFunction();
   return Cache;
 }
 // -- SHPEdgeFn --
-std::shared_ptr<EdgeFunction<IDESecureHeapPropagation::l_t>>
+EdgeFunction<IDESecureHeapPropagation::l_t> *
 IDESecureHeapPropagation::SHPEdgeFn::joinWith(
-    std::shared_ptr<EdgeFunction<l_t>> OtherFunction) {
+    EdgeFunction<l_t> *OtherFunction) {
 
-  if (OtherFunction.get() != this) {
+  if (OtherFunction != this) {
     return SHPGenEdgeFn::getInstance(l_t::BOT);
   }
-  return shared_from_this();
+  return this;
 }
 
 // -- SHPGenEdgeFn --
@@ -270,14 +269,14 @@ IDESecureHeapPropagation::l_t
 IDESecureHeapPropagation::SHPGenEdgeFn::computeTarget(l_t Source) {
   return value;
 }
-std::shared_ptr<EdgeFunction<IDESecureHeapPropagation::l_t>>
+EdgeFunction<IDESecureHeapPropagation::l_t> *
 IDESecureHeapPropagation::SHPGenEdgeFn::composeWith(
-    std::shared_ptr<EdgeFunction<l_t>> SecondFunction) {
+    EdgeFunction<l_t> *SecondFunction) {
   return SHPGenEdgeFn::getInstance(SecondFunction->computeTarget(value));
 }
 bool IDESecureHeapPropagation::SHPGenEdgeFn::equal_to(
-    std::shared_ptr<EdgeFunction<l_t>> Other) const {
-  return Other.get() == this; // reference-equality
+    EdgeFunction<l_t> *Other) const {
+  return Other == this; // reference-equality
 }
 
 void IDESecureHeapPropagation::SHPGenEdgeFn::print(std::ostream &OS,
@@ -299,13 +298,12 @@ void IDESecureHeapPropagation::SHPGenEdgeFn::print(std::ostream &OS,
   }
   OS << "]";
 }
-std::shared_ptr<IDESecureHeapPropagation::SHPGenEdgeFn>
+IDESecureHeapPropagation::SHPGenEdgeFn *
 IDESecureHeapPropagation::SHPGenEdgeFn::getInstance(l_t Val) {
-  static std::array<std::shared_ptr<SHPGenEdgeFn>, 3> Cache = {nullptr, nullptr,
-                                                               nullptr};
+  static std::array<SHPGenEdgeFn *, 3> Cache = {nullptr, nullptr, nullptr};
   auto Ind = static_cast<std::underlying_type<l_t>::type>(Val);
   if (!Cache[Ind]) {
-    Cache[Ind] = std::make_shared<SHPGenEdgeFn>(Val);
+    Cache[Ind] = new SHPGenEdgeFn(Val);
   }
   return Cache[Ind];
 }

@@ -15,7 +15,7 @@ using namespace std;
 
 namespace psr {
 
-const AllBottom<BinaryDomain> *ALL_BOTTOM =
+AllBottom<BinaryDomain> *ALL_BOTTOM =
     new AllBottom<BinaryDomain>(BinaryDomain::BOTTOM);
 
 } // namespace psr

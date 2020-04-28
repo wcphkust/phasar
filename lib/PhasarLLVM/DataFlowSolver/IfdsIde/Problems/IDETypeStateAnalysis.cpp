@@ -92,7 +92,7 @@ IDETypeStateAnalysis::getNormalFlowFunction(IDETypeStateAnalysis::n_t Curr,
   }
   if (const auto *Gep = llvm::dyn_cast<llvm::GetElementPtrInst>(Curr)) {
     if (hasMatchingType(Gep->getPointerOperand())) {
-      return make_shared<LambdaFlow<d_t>>([=](d_t Source) -> set<d_t> {
+      return new LambdaFlow<d_t>([=](d_t Source) -> set<d_t> {
         // if (Source == Gep->getPointerOperand()) {
         //  return {Source, Gep};
         //}
@@ -340,8 +340,7 @@ IDETypeStateAnalysis::getNormalEdgeFunction(
   if (const auto *Alloca = llvm::dyn_cast<llvm::AllocaInst>(Curr)) {
     if (hasMatchingType(Alloca)) {
       if (CurrNode == getZeroValue() && SuccNode == Alloca) {
-        struct TSAllocaEF : public EdgeFunction<l_t>,
-                            public std::enable_shared_from_this<TSAllocaEF> {
+        struct TSAllocaEF : public EdgeFunction<l_t> {
           const TypeStateDescription &TSD;
           l_t CurrentState;
           const llvm::AllocaInst *Alloca;
@@ -361,44 +360,41 @@ IDETypeStateAnalysis::getNormalEdgeFunction(
             OS << "Alloca(" << TSD.stateToString(CurrentState) << ")";
           }
 
-          bool equal_to(std::shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
-                            Other) const override {
+          bool equal_to(
+              EdgeFunction<IDETypeStateAnalysis::l_t> *Other) const override {
             if (auto *TSEF =
                     dynamic_cast<IDETypeStateAnalysis::TSEdgeFunction *>(
-                        Other.get())) {
+                        Other)) {
               return this->CurrentState == TSEF->getCurrentState();
             }
-            return this == Other.get();
+            return this == Other;
           }
-          std::shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
-          composeWith(std::shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
-                          SecondFunction) override {
+          EdgeFunction<IDETypeStateAnalysis::l_t> *
+          composeWith(EdgeFunction<IDETypeStateAnalysis::l_t> *SecondFunction)
+              override {
             if (auto *AB = dynamic_cast<AllBottom<IDETypeStateAnalysis::l_t> *>(
-                    SecondFunction.get())) {
-              return this->shared_from_this();
+                    SecondFunction)) {
+              return this;
             }
             if (auto *EI =
                     dynamic_cast<EdgeIdentity<IDETypeStateAnalysis::l_t> *>(
-                        SecondFunction.get())) {
-              return this->shared_from_this();
+                        SecondFunction)) {
+              return this;
             }
-            return make_shared<TSEdgeFunctionComposer>(
-                this->shared_from_this(), SecondFunction, TSD.bottom());
+            return new TSEdgeFunctionComposer(this, SecondFunction,
+                                              TSD.bottom());
           }
 
-          std::shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
-          joinWith(std::shared_ptr<EdgeFunction<IDETypeStateAnalysis::l_t>>
-                       OtherFunction) override {
-            if (OtherFunction.get() == this ||
-                OtherFunction->equal_to(this->shared_from_this())) {
-              return this->shared_from_this();
+          EdgeFunction<IDETypeStateAnalysis::l_t> *joinWith(
+              EdgeFunction<IDETypeStateAnalysis::l_t> *OtherFunction) override {
+            if (OtherFunction == this || OtherFunction->equal_to(this)) {
+              return this;
             }
             if (auto *AT = dynamic_cast<AllTop<IDETypeStateAnalysis::l_t> *>(
-                    OtherFunction.get())) {
-              return this->shared_from_this();
+                    OtherFunction)) {
+              return this;
             }
-            return make_shared<AllBottom<IDETypeStateAnalysis::l_t>>(
-                TSD.bottom());
+            return new AllBottom<IDETypeStateAnalysis::l_t>(TSD.bottom());
           }
         };
         return new TSAllocaEF(TSD, Alloca);
@@ -576,7 +572,7 @@ IDETypeStateAnalysis::TSEdgeFunction::joinWith(
   }
   // if (auto *EI = dynamic_cast<EdgeIdentity<IDETypeStateAnalysis::l_t> *>(
   //         OtherFunction.get())) {
-  //   return this->shared_from_this();
+  //   return this;
   // }
   if (auto *AT =
           dynamic_cast<AllTop<IDETypeStateAnalysis::l_t> *>(OtherFunction)) {

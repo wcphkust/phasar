@@ -627,7 +627,7 @@ protected:
       for (D d3 : res) {
         EdgeFunction<L> *g =
             cachedFlowEdgeFunctions.getNormalEdgeFunction(n, d2, fn, d3);
-        LOG_IF_ENABLE(BOOST_LOG_SEV(lg, DEBUG)
+        LOG_IF_ENABLE(BOOST_LOG_SEV(lg::get(), DEBUG)
                       << "Queried Normal Edge Function: " << g->str());
         EdgeFunction<L> *fprime =
             cachedFlowEdgeFunctions.manageEdgeFunction(f->composeWith(g));
@@ -992,7 +992,7 @@ protected:
             // return site using the composed function
             auto revLookupResult = jumpFn->reverseLookup(c, d4);
             if (revLookupResult) {
-              for (auto valAndFunc : revLookupResult) {
+              for (auto valAndFunc : revLookupResult->get()) {
                 EdgeFunction<L> *f3 = valAndFunc.second;
                 if (!f3->equal_to(allTop)) {
                   D d3 = valAndFunc.first;
@@ -1108,17 +1108,16 @@ protected:
    * @param d2 The abstraction at the current node
    * @return The set of abstractions at the successor node
    */
-  std::set<D> computeNormalFlowFunction(const FlowFunction<D> *flowFunction,
-                                        D d1, D d2) {
+  std::set<D> computeNormalFlowFunction(FlowFunction<D> *flowFunction, D d1,
+                                        D d2) {
     return flowFunction->computeTargets(d2);
   }
 
   /**
    * TODO: comment
    */
-  std::set<D>
-  computeSummaryFlowFunction(const FlowFunction<D> *SummaryFlowFunction, D d1,
-                             D d2) {
+  std::set<D> computeSummaryFlowFunction(FlowFunction<D> *SummaryFlowFunction,
+                                         D d1, D d2) {
     return SummaryFlowFunction->computeTargets(d2);
   }
 
@@ -1129,8 +1128,8 @@ protected:
    * @param d2 The abstraction at the call site
    * @return The set of caller-side abstractions at the callee's start node
    */
-  std::set<D> computeCallFlowFunction(const FlowFunction<D> *callFlowFunction,
-                                      D d1, D d2) {
+  std::set<D> computeCallFlowFunction(FlowFunction<D> *callFlowFunction, D d1,
+                                      D d2) {
     return callFlowFunction->computeTargets(d2);
   }
 
@@ -1143,8 +1142,9 @@ protected:
    * @param d2 The abstraction at the call site
    * @return The set of caller-side abstractions at the return site
    */
-  std::set<D> computeCallToReturnFlowFunction(
-      const FlowFunction<D> *callToReturnFlowFunction, D d1, D d2) {
+  std::set<D>
+  computeCallToReturnFlowFunction(FlowFunction<D> *callToReturnFlowFunction,
+                                  D d1, D d2) {
     return callToReturnFlowFunction->computeTargets(d2);
   }
 
@@ -1158,8 +1158,8 @@ protected:
    * @param callerSideDs The abstractions at the call site
    * @return The set of caller-side abstractions at the return site
    */
-  std::set<D> computeReturnFlowFunction(const FlowFunction<D> *retFunction,
-                                        D d1, D d2, N callSite,
+  std::set<D> computeReturnFlowFunction(FlowFunction<D> *retFunction, D d1,
+                                        D d2, N callSite,
                                         const std::set<D> &callerSideDs) {
     return retFunction->computeTargets(d2);
   }
@@ -1182,7 +1182,7 @@ protected:
    * but may be useful for subclasses of {@link IDESolver})
    */
   void
-  propagate(D sourceVal, N target, D targetVal, const EdgeFunction<L> *f,
+  propagate(D sourceVal, N target, D targetVal, EdgeFunction<L> *f,
             /* deliberately exposed to clients */ N relatedCallSite,
             /* deliberately exposed to clients */ bool isUnbalancedReturn) {
     LOG_IF_ENABLE(BOOST_LOG_SEV(lg::get(), DEBUG) << "Propagate flow";
@@ -1193,14 +1193,14 @@ protected:
                   BOOST_LOG_SEV(lg::get(), DEBUG)
                   << "Target value  : " << IDEProblem.DtoString(targetVal);
                   BOOST_LOG_SEV(lg::get(), DEBUG)
-                  << "Edge function : " << f.get()->str()
+                  << "Edge function : " << f->str()
                   << " (result of previous compose)";
                   BOOST_LOG_SEV(lg::get(), DEBUG) << ' ');
     EdgeFunction<L> *jumpFnE = nullptr;
     EdgeFunction<L> *fPrime;
     auto revLookupResult = jumpFn->reverseLookup(target, targetVal);
-    if (revLookupResult && !revLookupResult.empty()) {
-      jumpFnE = revLookupResult[sourceVal];
+    if (revLookupResult && !revLookupResult->get().empty()) {
+      jumpFnE = revLookupResult->get()[sourceVal];
     }
     if (jumpFnE == nullptr) {
       jumpFnE = allTop; // jump function is initialized to all-top
@@ -1825,11 +1825,10 @@ public:
 };
 
 template <typename Problem>
-IDESolver(Problem &)
-    ->IDESolver<typename Problem::n_t, typename Problem::d_t,
-                typename Problem::f_t, typename Problem::t_t,
-                typename Problem::v_t, typename Problem::l_t,
-                typename Problem::i_t>;
+IDESolver(Problem &) -> IDESolver<typename Problem::n_t, typename Problem::d_t,
+                                  typename Problem::f_t, typename Problem::t_t,
+                                  typename Problem::v_t, typename Problem::l_t,
+                                  typename Problem::i_t>;
 
 template <typename Problem>
 using IDESolver_P = IDESolver<typename Problem::n_t, typename Problem::d_t,
