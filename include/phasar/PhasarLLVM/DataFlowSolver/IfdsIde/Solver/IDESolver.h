@@ -83,7 +83,7 @@ public:
   IDESolver(IDETabulationProblem<N, D, F, T, V, L, I> &Problem)
       : IDEProblem(Problem), ZeroValue(Problem.getZeroValue()),
         ICF(Problem.getICFG()), SolverConfig(Problem.getIFDSIDESolverConfig()),
-        cachedFlowEdgeFunctions(Problem), allTop(Problem.allTopFunction()),
+        cachedFlowEdgeFunctions(Problem), allTop(cachedFlowEdgeFunctions.manageEdgeFunction(Problem.allTopFunction())),
         jumpFn(std::make_shared<JumpFunctions<N, D, F, T, V, L, I>>(
             allTop, IDEProblem)),
         initialSeeds(Problem.initialSeeds()) {}

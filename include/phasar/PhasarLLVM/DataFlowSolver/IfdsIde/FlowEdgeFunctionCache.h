@@ -113,6 +113,7 @@ public:
 
   ~FlowEdgeFunctionCache() {
     // Freeing all Flow Functions that are no singletons
+    std::cout << "Cache destructor\n";
     for (auto elem : NormalFlowFunctionCache) {
       if (!registeredFlowFunctionSingletons.count(elem.second)) {
         delete elem.second;
@@ -135,27 +136,27 @@ public:
     }
     // Freeing all Edge Functions that are no singletons
     for (auto elem : NormalEdgeFunctionCache) {
-      if (!registeredEdgeFunctionSingletons.count(elem.second)) {
+      if (!registeredEdgeFunctionSingletons.count(elem.second) && !managedEdgeFunctions.count(elem.second)) {
         delete elem.second;
       }
     }
     for (auto elem : CallEdgeFunctionCache) {
-      if (!registeredEdgeFunctionSingletons.count(elem.second)) {
+      if (!registeredEdgeFunctionSingletons.count(elem.second) && !managedEdgeFunctions.count(elem.second)) {
         delete elem.second;
       }
     }
     for (auto elem : ReturnEdgeFunctionCache) {
-      if (!registeredEdgeFunctionSingletons.count(elem.second)) {
+      if (!registeredEdgeFunctionSingletons.count(elem.second) && !managedEdgeFunctions.count(elem.second)) {
         delete elem.second;
       }
     }
     for (auto elem : CallToRetEdgeFunctionCache) {
-      if (!registeredEdgeFunctionSingletons.count(elem.second)) {
+      if (!registeredEdgeFunctionSingletons.count(elem.second) && !managedEdgeFunctions.count(elem.second)) {
         delete elem.second;
       }
     }
     for (auto elem : SummaryEdgeFunctionCache) {
-      if (!registeredEdgeFunctionSingletons.count(elem.second)) {
+      if (!registeredEdgeFunctionSingletons.count(elem.second) && !managedEdgeFunctions.count(elem.second)) {
         delete elem.second;
       }
     }
