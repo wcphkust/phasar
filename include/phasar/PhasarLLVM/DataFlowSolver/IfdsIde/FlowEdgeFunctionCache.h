@@ -66,6 +66,8 @@ private:
   std::unordered_set<FlowFunction<D> *> registeredFlowFunctionSingletons = {
       Identity<D>::getInstance(), KillAll<D>::getInstance()};
 
+  std::unordered_set<FlowFunction<D> *> managedFlowFunctions;
+
 public:
   // Ctor allows access to the IDEProblem in order to get access to flow and
   // edge function factory functions.
@@ -115,23 +117,28 @@ public:
     // Freeing all Flow Functions that are no singletons
     std::cout << "Cache destructor\n";
     for (auto elem : NormalFlowFunctionCache) {
-      if (!registeredFlowFunctionSingletons.count(elem.second)) {
+      if (!registeredFlowFunctionSingletons.count(elem.second) && !managedFlowFunctions.count(elem.second)) {
         delete elem.second;
       }
     }
     for (auto elem : CallFlowFunctionCache) {
-      if (!registeredFlowFunctionSingletons.count(elem.second)) {
+      if (!registeredFlowFunctionSingletons.count(elem.second) && !managedFlowFunctions.count(elem.second)) {
         delete elem.second;
       }
     }
     for (auto elem : ReturnFlowFunctionCache) {
-      if (!registeredFlowFunctionSingletons.count(elem.second)) {
+      if (!registeredFlowFunctionSingletons.count(elem.second) && !managedFlowFunctions.count(elem.second)) {
         delete elem.second;
       }
     }
     for (auto elem : CallToRetFlowFunctionCache) {
-      if (!registeredFlowFunctionSingletons.count(elem.second)) {
+      if (!registeredFlowFunctionSingletons.count(elem.second) && !managedFlowFunctions.count(elem.second)) {
         delete elem.second;
+      }
+    }
+    for (auto elem : managedFlowFunctions) {
+      if (!registeredFlowFunctionSingletons.count(elem)) {
+        delete elem;
       }
     }
     // Freeing all Edge Functions that are no singletons
@@ -177,6 +184,11 @@ public:
     return p;
   }
 
+  FlowFunction<D> *manageFlowFunction(FlowFunction<D> *p){
+    managedFlowFunctions.insert(p);
+    return p;
+  }
+
   void registerAsEdgeFunctionSingleton(std::set<EdgeFunction<L> *> s) {
     registeredEdgeFunctionSingletons.insert(s.begin(), s.end());
   }
@@ -204,7 +216,7 @@ public:
       INC_COUNTER("Normal-FF Construction", 1, PAMM_SEVERITY_LEVEL::Full);
       auto ff = (autoAddZero)
                     ? new ZeroedFlowFunction<D>(
-                          problem.getNormalFlowFunction(curr, succ), zeroValue)
+                          manageFlowFunction(problem.getNormalFlowFunction(curr, succ)), zeroValue)
                     : problem.getNormalFlowFunction(curr, succ);
       NormalFlowFunctionCache.insert(make_pair(key, ff));
       LOG_IF_ENABLE(BOOST_LOG_SEV(lg::get(), DEBUG)
@@ -234,7 +246,7 @@ public:
       auto ff =
           (autoAddZero)
               ? new ZeroedFlowFunction<D>(
-                    problem.getCallFlowFunction(callStmt, destFun), zeroValue)
+                    manageFlowFunction(problem.getCallFlowFunction(callStmt, destFun)), zeroValue)
               : problem.getCallFlowFunction(callStmt, destFun);
       CallFlowFunctionCache.insert(std::make_pair(key, ff));
       LOG_IF_ENABLE(BOOST_LOG_SEV(lg::get(), DEBUG)
@@ -267,8 +279,8 @@ public:
     } else {
       INC_COUNTER("Return-FF Construction", 1, PAMM_SEVERITY_LEVEL::Full);
       auto ff = (autoAddZero) ? new ZeroedFlowFunction<D>(
-                                    problem.getRetFlowFunction(
-                                        callSite, calleeFun, exitStmt, retSite),
+                                    manageFlowFunction(problem.getRetFlowFunction(
+                                        callSite, calleeFun, exitStmt, retSite)),
                                     zeroValue)
                               : problem.getRetFlowFunction(callSite, calleeFun,
                                                            exitStmt, retSite);
@@ -305,8 +317,8 @@ public:
       INC_COUNTER("CallToRet-FF Construction", 1, PAMM_SEVERITY_LEVEL::Full);
       auto ff =
           (autoAddZero)
-              ? new ZeroedFlowFunction<D>(problem.getCallToRetFlowFunction(
-                                              callSite, retSite, callees),
+              ? new ZeroedFlowFunction<D>(manageFlowFunction(problem.getCallToRetFlowFunction(
+                                              callSite, retSite, callees)),
                                           zeroValue)
               : problem.getCallToRetFlowFunction(callSite, retSite, callees);
       CallToRetFlowFunctionCache.insert(std::make_pair(key, ff));
